@@ -1,0 +1,17 @@
+age = input("What is your current age? ")
+max_years = 90;
+
+max_days = 365 * max_years
+max_weeks = 52 * max_years
+max_months = 12 * max_years
+
+days_lived = 365 * int(age);
+weeks_lived = 52 * int(age);
+months_lived = 12 * int(age);
+
+days_left = max_days - days_lived;
+weeks_left = max_weeks - weeks_lived;
+months_left = max_months - months_lived;
+
+
+print(f"You have {days_left} days, {weeks_left} weeks, and {months_left} months left.")
