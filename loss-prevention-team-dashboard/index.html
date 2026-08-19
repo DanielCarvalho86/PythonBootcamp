@@ -1,0 +1,2060 @@
+<title>Central Prevenção de Perdas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  :root {
+    --bg: #eef1f6;
+    --surface: #ffffff;
+    --surface-2: #f5f7fb;
+    --surface-3: #eaeef4;
+    --border: #d9dfe8;
+    --border-strong: #c2cad7;
+    --ink: #182233;
+    --ink-muted: #5b6b82;
+    --ink-faint: #8895a8;
+
+    --accent: #2e4374;
+    --accent-strong: #1f3059;
+    --accent-ink: #ffffff;
+    --accent-soft: #e3e9f6;
+
+    --good: #1f8a5a;
+    --good-soft: #e3f4ec;
+    --warn: #a86a08;
+    --warn-soft: #fbf0d9;
+    --crit: #bd3a30;
+    --crit-soft: #fbe7e4;
+    --neutral: #6b7688;
+    --neutral-soft: #eaedf2;
+
+    --shadow: 0 1px 2px rgba(24, 34, 51, 0.06), 0 8px 24px -12px rgba(24, 34, 51, 0.18);
+    --radius: 10px;
+
+    --font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+    --font-body: "Public Sans", -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1620;
+      --surface: #161f2c;
+      --surface-2: #1b2431;
+      --surface-3: #212c3b;
+      --border: #2b3648;
+      --border-strong: #3a4a63;
+      --ink: #e8edf5;
+      --ink-muted: #9aa8bd;
+      --ink-faint: #6c7a90;
+
+      --accent: #8ba0da;
+      --accent-strong: #a9bbe6;
+      --accent-ink: #10182a;
+      --accent-soft: #22304c;
+
+      --good: #4fbb87;
+      --good-soft: #17301f;
+      --warn: #dda23e;
+      --warn-soft: #392a11;
+      --crit: #e2766a;
+      --crit-soft: #3a1c17;
+      --neutral: #8b97a9;
+      --neutral-soft: #232e3d;
+
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 28px -14px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0f1620;
+    --surface: #161f2c;
+    --surface-2: #1b2431;
+    --surface-3: #212c3b;
+    --border: #2b3648;
+    --border-strong: #3a4a63;
+    --ink: #e8edf5;
+    --ink-muted: #9aa8bd;
+    --ink-faint: #6c7a90;
+
+    --accent: #8ba0da;
+    --accent-strong: #a9bbe6;
+    --accent-ink: #10182a;
+    --accent-soft: #22304c;
+
+    --good: #4fbb87;
+    --good-soft: #17301f;
+    --warn: #dda23e;
+    --warn-soft: #392a11;
+    --crit: #e2766a;
+    --crit-soft: #3a1c17;
+    --neutral: #8b97a9;
+    --neutral-soft: #232e3d;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 28px -14px rgba(0, 0, 0, 0.6);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    background: var(--bg);
+    color: var(--ink);
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--accent-soft);
+  }
+
+  a {
+    color: var(--accent-strong);
+  }
+
+  .wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px 64px;
+  }
+
+  /* ---------- Header ---------- */
+
+  header.top {
+    background: linear-gradient(180deg, var(--accent-strong), var(--accent));
+    color: var(--accent-ink);
+    padding: 28px 20px 34px;
+    margin-bottom: -22px;
+  }
+
+  header.top .wrap {
+    padding: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .brand-mark {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.16);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    flex: none;
+  }
+
+  .brand h1 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(26px, 3.4vw, 34px);
+    letter-spacing: 0.01em;
+    margin: 0;
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+
+  .brand p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.78);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .top-meta {
+    text-align: right;
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.75);
+    font-family: var(--font-mono);
+  }
+
+  .top-meta strong {
+    display: block;
+    color: #fff;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+
+  /* ---------- Read-only banner ---------- */
+
+  #readonly-banner {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: var(--warn-soft);
+    color: var(--warn);
+    border: 1px solid var(--warn);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 20px 0;
+  }
+
+  #readonly-banner.show {
+    display: flex;
+  }
+
+  /* ---------- KPI row ---------- */
+
+  .kpi-row {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin: 22px 0 24px;
+  }
+
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .kpi .kpi-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+  }
+
+  .kpi .kpi-value {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 34px;
+    line-height: 1.1;
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .kpi .kpi-value.tone-crit {
+    color: var(--crit);
+  }
+  .kpi .kpi-value.tone-warn {
+    color: var(--warn);
+  }
+  .kpi .kpi-value.tone-good {
+    color: var(--good);
+  }
+
+  .kpi .kpi-sub {
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 2px;
+  }
+
+  /* ---------- Status distribution bar ---------- */
+
+  .status-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px 18px 14px;
+    margin-bottom: 24px;
+  }
+
+  .status-panel h2 {
+    margin: 0 0 10px;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    font-weight: 700;
+  }
+
+  .status-bar {
+    display: flex;
+    height: 10px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: var(--surface-3);
+  }
+
+  .status-bar span {
+    height: 100%;
+    transition: width 0.25s ease;
+  }
+
+  .status-bar .seg-good {
+    background: var(--good);
+  }
+  .status-bar .seg-warn {
+    background: var(--warn);
+  }
+  .status-bar .seg-crit {
+    background: var(--crit);
+  }
+  .status-bar .seg-none {
+    background: var(--neutral);
+  }
+
+  .status-legend {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+  }
+
+  .status-legend .item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-legend .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 3px;
+    flex: none;
+  }
+
+  .dot.good {
+    background: var(--good);
+  }
+  .dot.warn {
+    background: var(--warn);
+  }
+  .dot.crit {
+    background: var(--crit);
+  }
+  .dot.none {
+    background: var(--neutral);
+  }
+
+  /* ---------- Toolbar ---------- */
+
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  .search-box {
+    position: relative;
+    flex: 1 1 240px;
+    min-width: 200px;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 9px 12px 9px 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 13.5px;
+  }
+
+  .search-box::before {
+    content: "";
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    width: 13px;
+    height: 13px;
+    transform: translateY(-50%);
+    border: 2px solid var(--ink-faint);
+    border-radius: 50%;
+    box-shadow: 3px 3px 0 -1px var(--ink-faint);
+  }
+
+  select.filter,
+  .toolbar input[type="text"].filter {
+    padding: 9px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 13px;
+  }
+
+  .btn {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 13.5px;
+    border-radius: 8px;
+    padding: 9px 16px;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+
+  .btn:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  [contenteditable]:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-strong);
+  }
+
+  .btn-ghost {
+    background: var(--surface);
+    border-color: var(--border-strong);
+    color: var(--ink);
+  }
+
+  .btn-ghost:hover {
+    background: var(--surface-3);
+  }
+
+  .btn-danger {
+    background: var(--crit-soft);
+    color: var(--crit);
+    border-color: var(--crit);
+  }
+
+  .btn-sm {
+    padding: 6px 11px;
+    font-size: 12.5px;
+  }
+
+  /* ---------- Table ---------- */
+
+  .table-shell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+  }
+
+  table.roster {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 980px;
+  }
+
+  table.roster thead th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink-muted);
+    font-weight: 700;
+    background: var(--surface-2);
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  table.roster td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  tr.row-summary:hover {
+    background: var(--surface-2);
+  }
+
+  tr.row-summary[data-local-hidden="true"],
+  tr.row-detail[data-local-hidden="true"] {
+    display: none;
+  }
+
+  .mono {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--ink-muted);
+  }
+
+  td input[type="text"],
+  td input[type="tel"] {
+    width: 100%;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    padding: 5px 6px;
+    border-radius: 6px;
+  }
+
+  td input[type="text"]:hover,
+  td input[type="tel"]:hover {
+    border-color: var(--border);
+  }
+
+  td input[type="text"]:focus,
+  td input[type="tel"]:focus {
+    border-color: var(--accent);
+    background: var(--surface);
+    outline: none;
+  }
+
+  .cell-nome {
+    font-weight: 700;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .chip::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex: none;
+  }
+
+  .chip.good {
+    background: var(--good-soft);
+    color: var(--good);
+  }
+  .chip.good::before {
+    background: var(--good);
+  }
+  .chip.warn {
+    background: var(--warn-soft);
+    color: var(--warn);
+  }
+  .chip.warn::before {
+    background: var(--warn);
+  }
+  .chip.crit {
+    background: var(--crit-soft);
+    color: var(--crit);
+  }
+  .chip.crit::before {
+    background: var(--crit);
+  }
+  .chip.none {
+    background: var(--neutral-soft);
+    color: var(--neutral);
+  }
+  .chip.none::before {
+    background: var(--neutral);
+  }
+
+  .btn-expand {
+    background: none;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    width: 30px;
+    height: 30px;
+    color: var(--ink-muted);
+    cursor: pointer;
+    font-size: 13px;
+    transition: transform 0.15s ease;
+  }
+
+  .btn-expand:hover {
+    background: var(--surface-3);
+  }
+
+  tr.row-detail[data-local-expanded="true"] + tr .btn-expand,
+  .btn-expand[aria-expanded="true"] {
+    transform: rotate(180deg);
+  }
+
+  tr.row-detail td.detail-cell {
+    background: var(--surface-2);
+    padding: 20px 22px 22px;
+  }
+
+  tr.row-detail[data-local-open="false"] {
+    display: none;
+  }
+
+  /* ---------- Detail panel ---------- */
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 22px;
+  }
+
+  .field-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 15px 16px;
+  }
+
+  .field-section h3 {
+    margin: 0 0 11px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent-strong);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .field {
+    margin-bottom: 9px;
+  }
+
+  .field:last-child {
+    margin-bottom: 0;
+  }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-bottom: 3px;
+    font-weight: 600;
+  }
+
+  .field input[type="text"],
+  .field input[type="tel"],
+  .field input[type="date"],
+  .field input[type="number"] {
+    width: 100%;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 13px;
+    padding: 6px 8px;
+    border-radius: 6px;
+  }
+
+  .field input:focus {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .field-derived {
+    font-size: 12px;
+    color: var(--ink-muted);
+    background: var(--surface-2);
+    border-radius: 6px;
+    padding: 6px 8px;
+    margin-top: 6px;
+  }
+
+  .field-derived strong {
+    color: var(--ink);
+  }
+
+  .status-toggle {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .status-toggle button {
+    flex: 1;
+    padding: 6px 4px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--ink-muted);
+    cursor: pointer;
+  }
+
+  .status-toggle button[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .status-toggle button[data-status="afastado"][aria-pressed="true"] {
+    background: var(--warn);
+    border-color: var(--warn);
+    color: #1a1200;
+  }
+
+  .status-toggle button[data-status="inativo"][aria-pressed="true"] {
+    background: var(--neutral);
+    border-color: var(--neutral);
+    color: #fff;
+  }
+
+  .equip-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 10px;
+    margin-bottom: 10px;
+  }
+
+  .equip-check {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+  }
+
+  .equip-check input {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--accent);
+  }
+
+  .obsbox {
+    min-height: 46px;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    padding: 7px 8px;
+    background: var(--surface);
+    font-size: 13px;
+    font-family: var(--font-body);
+    color: var(--ink);
+  }
+
+  .obsbox:empty::before {
+    content: attr(data-placeholder);
+    color: var(--ink-faint);
+  }
+
+  .obsbox:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .pending-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .pending-check input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--crit);
+  }
+
+  .detail-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .confirm-remove {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--crit);
+    font-weight: 600;
+  }
+
+  .confirm-remove[data-local-show="true"] {
+    display: flex;
+  }
+
+  .confirm-remove[data-local-show="true"] ~ .btn-remove-start {
+    display: none;
+  }
+
+  /* ---------- Legend / footer ---------- */
+
+  .foot-note {
+    margin-top: 22px;
+    font-size: 12px;
+    color: var(--ink-faint);
+    line-height: 1.6;
+  }
+
+  .empty-state {
+    display: none;
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 13.5px;
+  }
+
+  @media (max-width: 760px) {
+    .kpi-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+    }
+  }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">🛡️</div>
+      <div>
+        <h1>Central Prevenção de Perdas</h1>
+        <p>Gestão da equipe · matrícula, documentação, férias e equipamentos</p>
+      </div>
+    </div>
+    <div class="top-meta">
+      <strong id="clock-label">—</strong>
+      <span>painel colaborativo — as edições ficam salvas neste documento</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="readonly-banner" role="status">
+    👁️ Modo somente leitura — você pode consultar os dados, mas as alterações não serão salvas.
+  </div>
+
+  <section class="kpi-row" aria-label="Indicadores da equipe">
+    <div class="kpi">
+      <div class="kpi-label">Efetivo Ativo</div>
+      <div class="kpi-value" id="kpi-headcount">—</div>
+      <div class="kpi-sub" id="kpi-headcount-sub">&nbsp;</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Documentos: atenção/vencidos</div>
+      <div class="kpi-value tone-crit" id="kpi-docs">—</div>
+      <div class="kpi-sub" id="kpi-docs-sub">&nbsp;</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Férias: prazo próximo</div>
+      <div class="kpi-value tone-warn" id="kpi-ferias">—</div>
+      <div class="kpi-sub" id="kpi-ferias-sub">&nbsp;</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Pendências abertas</div>
+      <div class="kpi-value" id="kpi-pend">—</div>
+      <div class="kpi-sub" id="kpi-pend-sub">&nbsp;</div>
+    </div>
+  </section>
+
+  <section class="status-panel">
+    <h2>Distribuição de vencimentos de documentos (CNH · ASO · treinamentos · antecedentes)</h2>
+    <div class="status-bar" id="status-bar" role="img" aria-label="Distribuição de status de documentos">
+      <span class="seg-good" id="seg-good" style="width:0%"></span>
+      <span class="seg-warn" id="seg-warn" style="width:0%"></span>
+      <span class="seg-crit" id="seg-crit" style="width:0%"></span>
+      <span class="seg-none" id="seg-none" style="width:0%"></span>
+    </div>
+    <div class="status-legend">
+      <span class="item"><span class="dot good"></span> Em dia (mais de 30 dias)</span>
+      <span class="item"><span class="dot warn"></span> Atenção (até 30 dias)</span>
+      <span class="item"><span class="dot crit"></span> Crítico (até 7 dias ou vencido)</span>
+      <span class="item"><span class="dot none"></span> Não aplicável / não informado</span>
+    </div>
+  </section>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Buscar por nome, matrícula, cargo, função ou gestor…" autocomplete="off" />
+    </div>
+    <select class="filter" id="filter-status">
+      <option value="">Status: todos</option>
+      <option value="ativo">Ativo</option>
+      <option value="afastado">Afastado</option>
+      <option value="inativo">Inativo</option>
+    </select>
+    <select class="filter" id="filter-doc">
+      <option value="">Documentos: todos</option>
+      <option value="crit">Crítico</option>
+      <option value="warn">Atenção</option>
+      <option value="good">Em dia</option>
+    </select>
+    <button class="btn btn-ghost btn-sm" id="btn-clear-filters" type="button">Limpar filtros</button>
+    <button class="btn btn-primary" id="btn-add" type="button">+ Novo colaborador</button>
+  </div>
+
+  <div class="table-shell">
+    <div class="table-scroll">
+      <table class="roster">
+        <thead>
+          <tr>
+            <th>Matrícula</th>
+            <th>Colaborador</th>
+            <th>Cargo</th>
+            <th>Função</th>
+            <th>Gestor direto</th>
+            <th>Telefone</th>
+            <th>Documentos</th>
+            <th>Férias</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="roster-body" artifact-sync>
+          <!-- ============================================================ -->
+          <!-- 1. Marina Salgado Ferreira -->
+          <!-- ============================================================ -->
+          <tr class="row-summary" data-emp data-local-hidden="false">
+            <td><span class="mono">PP-1001</span></td>
+            <td><input type="text" value="Marina Salgado Ferreira" data-field="nome" /></td>
+            <td><input type="text" value="Gerente de Prevenção de Perdas" data-field="cargo" list="dl-cargo" /></td>
+            <td><input type="text" value="Gestão Regional" data-field="funcao" list="dl-funcao" /></td>
+            <td><input type="text" value="Ricardo Nogueira (Diretor de Operações)" data-field="gestor" /></td>
+            <td><input type="tel" value="(11) 98211-4470" data-field="telefone" /></td>
+            <td><span class="chip warn" data-role="doc-chip">⚠ Atenção</span></td>
+            <td><span class="chip good" data-role="ferias-chip">✓ Em dia</span></td>
+            <td><button class="btn-expand" type="button" aria-expanded="false" aria-label="Ver detalhes">⌄</button></td>
+          </tr>
+          <tr class="row-detail" data-local-hidden="false" data-local-open="false">
+            <td class="detail-cell" colspan="9">
+              <div class="detail-grid">
+                <div class="field-section">
+                  <h3>Dados & contato</h3>
+                  <div class="field"><label>Unidade / local de trabalho</label><input type="text" value="Regional Sudeste" data-field="unidade" list="dl-unidade" /></div>
+                  <div class="field"><label>Data de admissão</label><input type="date" value="2019-03-11" data-field="admissao" /></div>
+                  <div class="field">
+                    <label>Status</label>
+                    <div class="status-toggle" data-role="status-toggle">
+                      <button type="button" data-status="ativo" aria-pressed="true">Ativo</button>
+                      <button type="button" data-status="afastado" aria-pressed="false">Afastado</button>
+                      <button type="button" data-status="inativo" aria-pressed="false">Inativo</button>
+                    </div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Contato emergência — nome</label><input type="text" value="Beatriz Salgado" data-field="emerg-nome" /></div>
+                    <div class="field"><label>Parentesco</label><input type="text" value="Cônjuge" data-field="emerg-parentesco" /></div>
+                  </div>
+                  <div class="field"><label>Contato emergência — telefone</label><input type="tel" value="(11) 98811-2290" data-field="emerg-telefone" /></div>
+                </div>
+
+                <div class="field-section" data-role="docs-section">
+                  <h3>Documentos & vencimentos</h3>
+                  <div class="field-row">
+                    <div class="field"><label>CNH — número</label><input type="text" value="34781122-SP" data-field="cnh-numero" /></div>
+                    <div class="field"><label>Categoria</label><input type="text" value="B" data-field="cnh-categoria" /></div>
+                  </div>
+                  <div class="field"><label>CNH — validade</label><input type="date" value="2027-05-02" data-field="cnh-validade" data-doc-date /></div>
+                  <div class="field"><label>ASO — validade</label><input type="date" value="2026-09-05" data-field="aso-validade" data-doc-date /></div>
+                  <div class="field"><label>Treinamento / reciclagem</label><input type="text" value="Gestão de Crise e Compliance" data-field="trein-nome" /></div>
+                  <div class="field"><label>Validade do treinamento</label><input type="date" value="2026-12-01" data-field="trein-validade" data-doc-date /></div>
+                  <div class="field"><label>Antecedentes / certidão — validade</label><input type="date" value="2027-01-15" data-field="antecedentes-validade" data-doc-date /></div>
+                </div>
+
+                <div class="field-section" data-role="ferias-section">
+                  <h3>Férias</h3>
+                  <div class="field-row">
+                    <div class="field"><label>Período aquisitivo — início</label><input type="date" value="2025-03-11" data-field="periodo-inicio" /></div>
+                    <div class="field"><label>Período aquisitivo — fim</label><input type="date" value="2026-03-10" data-field="periodo-fim" data-periodo-fim /></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Dias de direito</label><input type="number" value="30" data-field="dias-direito" min="0" max="30" /></div>
+                    <div class="field"><label>Dias já gozados</label><input type="number" value="10" data-field="dias-gozados" min="0" max="30" /></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Próximas férias — início</label><input type="date" value="" data-field="ferias-prox-inicio" /></div>
+                    <div class="field"><label>Próximas férias — fim</label><input type="date" value="" data-field="ferias-prox-fim" /></div>
+                  </div>
+                  <div class="field-derived" data-role="ferias-derived">Saldo e prazo calculados automaticamente.</div>
+                </div>
+
+                <div class="field-section">
+                  <h3>Equipamentos</h3>
+                  <div class="equip-grid" data-role="equip-grid">
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-notebook" /> Notebook</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-celular" /> Celular corporativo</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-monitor" /> Monitor</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-mouse" /> Mouse</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-teclado" /> Teclado</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-veiculo" /> Veículo</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-cracha" /> Crachá de acesso</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-radio" /> Rádio / HT</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-colete" /> Uniforme / colete</label>
+                  </div>
+                  <div class="field"><label>Identificação / patrimônio</label><input type="text" value="NB-1188 · Cel 11 98211-4470 · Placa RKA-1B32" data-field="eq-patrimonio" /></div>
+                  <div class="field"><label>Outros equipamentos</label><input type="text" value="" data-field="eq-outros" /></div>
+                </div>
+
+                <div class="field-section">
+                  <h3>Pendências & observações</h3>
+                  <label class="pending-check"><input type="checkbox" data-field="pendencia-flag" /> Pendência em aberto</label>
+                  <div class="field"><label>Descrição da pendência</label><input type="text" value="" data-field="pendencia-descricao" /></div>
+                  <div class="field">
+                    <label>Observações gerais</label>
+                    <div class="obsbox" contenteditable="true" data-field="observacoes" data-placeholder="Sem observações."></div>
+                  </div>
+                  <div class="detail-footer">
+                    <span class="confirm-remove" data-local-show="false">
+                      Remover este colaborador?
+                      <button class="btn btn-danger btn-sm" type="button" data-role="btn-remove-confirm">Sim, remover</button>
+                      <button class="btn btn-ghost btn-sm" type="button" data-role="btn-remove-cancel">Cancelar</button>
+                    </span>
+                    <button class="btn btn-ghost btn-sm btn-remove-start" type="button" data-role="btn-remove-start">Remover colaborador</button>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ============================================================ -->
+          <!-- 2. Eduardo Matias Costa -->
+          <!-- ============================================================ -->
+          <tr class="row-summary" data-emp data-local-hidden="false">
+            <td><span class="mono">PP-1014</span></td>
+            <td><input type="text" value="Eduardo Matias Costa" data-field="nome" /></td>
+            <td><input type="text" value="Supervisor de Prevenção de Perdas" data-field="cargo" list="dl-cargo" /></td>
+            <td><input type="text" value="Supervisão de Loja" data-field="funcao" list="dl-funcao" /></td>
+            <td><input type="text" value="Marina Salgado Ferreira" data-field="gestor" /></td>
+            <td><input type="tel" value="(11) 97744-1182" data-field="telefone" /></td>
+            <td><span class="chip crit" data-role="doc-chip">✕ Crítico</span></td>
+            <td><span class="chip crit" data-role="ferias-chip">✕ Vencido</span></td>
+            <td><button class="btn-expand" type="button" aria-expanded="false" aria-label="Ver detalhes">⌄</button></td>
+          </tr>
+          <tr class="row-detail" data-local-hidden="false" data-local-open="false">
+            <td class="detail-cell" colspan="9">
+              <div class="detail-grid">
+                <div class="field-section">
+                  <h3>Dados & contato</h3>
+                  <div class="field"><label>Unidade / local de trabalho</label><input type="text" value="Loja Centro" data-field="unidade" list="dl-unidade" /></div>
+                  <div class="field"><label>Data de admissão</label><input type="date" value="2021-06-01" data-field="admissao" /></div>
+                  <div class="field">
+                    <label>Status</label>
+                    <div class="status-toggle" data-role="status-toggle">
+                      <button type="button" data-status="ativo" aria-pressed="true">Ativo</button>
+                      <button type="button" data-status="afastado" aria-pressed="false">Afastado</button>
+                      <button type="button" data-status="inativo" aria-pressed="false">Inativo</button>
+                    </div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Contato emergência — nome</label><input type="text" value="Paula Matias" data-field="emerg-nome" /></div>
+                    <div class="field"><label>Parentesco</label><input type="text" value="Irmã" data-field="emerg-parentesco" /></div>
+                  </div>
+                  <div class="field"><label>Contato emergência — telefone</label><input type="tel" value="(11) 97744-9090" data-field="emerg-telefone" /></div>
+                </div>
+
+                <div class="field-section" data-role="docs-section">
+                  <h3>Documentos & vencimentos</h3>
+                  <div class="field-row">
+                    <div class="field"><label>CNH — número</label><input type="text" value="41982233-SP" data-field="cnh-numero" /></div>
+                    <div class="field"><label>Categoria</label><input type="text" value="B" data-field="cnh-categoria" /></div>
+                  </div>
+                  <div class="field"><label>CNH — validade</label><input type="date" value="2026-08-25" data-field="cnh-validade" data-doc-date /></div>
+                  <div class="field"><label>ASO — validade</label><input type="date" value="2027-01-10" data-field="aso-validade" data-doc-date /></div>
+                  <div class="field"><label>Treinamento / reciclagem</label><input type="text" value="Abordagem e Direito de Prisão em Flagrante" data-field="trein-nome" /></div>
+                  <div class="field"><label>Validade do treinamento</label><input type="date" value="2026-09-01" data-field="trein-validade" data-doc-date /></div>
+                  <div class="field"><label>Antecedentes / certidão — validade</label><input type="date" value="2026-08-20" data-field="antecedentes-validade" data-doc-date /></div>
+                </div>
+
+                <div class="field-section" data-role="ferias-section">
+                  <h3>Férias</h3>
+                  <div class="field-row">
+                    <div class="field"><label>Período aquisitivo — início</label><input type="date" value="2024-06-01" data-field="periodo-inicio" /></div>
+                    <div class="field"><label>Período aquisitivo — fim</label><input type="date" value="2025-05-31" data-field="periodo-fim" data-periodo-fim /></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Dias de direito</label><input type="number" value="30" data-field="dias-direito" min="0" max="30" /></div>
+                    <div class="field"><label>Dias já gozados</label><input type="number" value="0" data-field="dias-gozados" min="0" max="30" /></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Próximas férias — início</label><input type="date" value="" data-field="ferias-prox-inicio" /></div>
+                    <div class="field"><label>Próximas férias — fim</label><input type="date" value="" data-field="ferias-prox-fim" /></div>
+                  </div>
+                  <div class="field-derived" data-role="ferias-derived">Saldo e prazo calculados automaticamente.</div>
+                </div>
+
+                <div class="field-section">
+                  <h3>Equipamentos</h3>
+                  <div class="equip-grid" data-role="equip-grid">
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-notebook" /> Notebook</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-celular" /> Celular corporativo</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-monitor" /> Monitor</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-mouse" /> Mouse</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-teclado" /> Teclado</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-veiculo" /> Veículo</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-cracha" /> Crachá de acesso</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-radio" /> Rádio / HT</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-colete" /> Uniforme / colete</label>
+                  </div>
+                  <div class="field"><label>Identificação / patrimônio</label><input type="text" value="NB-2077 · Cel 11 97744-1182 · HT-014" data-field="eq-patrimonio" /></div>
+                  <div class="field"><label>Outros equipamentos</label><input type="text" value="" data-field="eq-outros" /></div>
+                </div>
+
+                <div class="field-section">
+                  <h3>Pendências & observações</h3>
+                  <label class="pending-check"><input type="checkbox" checked data-field="pendencia-flag" /> Pendência em aberto</label>
+                  <div class="field"><label>Descrição da pendência</label><input type="text" value="Aguardando devolução de rádio HT antigo (HT-009)" data-field="pendencia-descricao" /></div>
+                  <div class="field">
+                    <label>Observações gerais</label>
+                    <div class="obsbox" contenteditable="true" data-field="observacoes" data-placeholder="Sem observações.">Prazo de concessão de férias do ciclo 2024/2025 já venceu — priorizar agendamento imediato.</div>
+                  </div>
+                  <div class="detail-footer">
+                    <span class="confirm-remove" data-local-show="false">
+                      Remover este colaborador?
+                      <button class="btn btn-danger btn-sm" type="button" data-role="btn-remove-confirm">Sim, remover</button>
+                      <button class="btn btn-ghost btn-sm" type="button" data-role="btn-remove-cancel">Cancelar</button>
+                    </span>
+                    <button class="btn btn-ghost btn-sm btn-remove-start" type="button" data-role="btn-remove-start">Remover colaborador</button>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ============================================================ -->
+          <!-- 3. Juliana Prates Andrade -->
+          <!-- ============================================================ -->
+          <tr class="row-summary" data-emp data-local-hidden="false">
+            <td><span class="mono">PP-1022</span></td>
+            <td><input type="text" value="Juliana Prates Andrade" data-field="nome" /></td>
+            <td><input type="text" value="Analista de Prevenção de Perdas" data-field="cargo" list="dl-cargo" /></td>
+            <td><input type="text" value="Monitoramento CFTV & Auditoria" data-field="funcao" list="dl-funcao" /></td>
+            <td><input type="text" value="Eduardo Matias Costa" data-field="gestor" /></td>
+            <td><input type="tel" value="(11) 96633-5510" data-field="telefone" /></td>
+            <td><span class="chip warn" data-role="doc-chip">⚠ Atenção</span></td>
+            <td><span class="chip good" data-role="ferias-chip">✓ Em dia</span></td>
+            <td><button class="btn-expand" type="button" aria-expanded="false" aria-label="Ver detalhes">⌄</button></td>
+          </tr>
+          <tr class="row-detail" data-local-hidden="false" data-local-open="false">
+            <td class="detail-cell" colspan="9">
+              <div class="detail-grid">
+                <div class="field-section">
+                  <h3>Dados & contato</h3>
+                  <div class="field"><label>Unidade / local de trabalho</label><input type="text" value="Loja Centro" data-field="unidade" list="dl-unidade" /></div>
+                  <div class="field"><label>Data de admissão</label><input type="date" value="2022-02-14" data-field="admissao" /></div>
+                  <div class="field">
+                    <label>Status</label>
+                    <div class="status-toggle" data-role="status-toggle">
+                      <button type="button" data-status="ativo" aria-pressed="true">Ativo</button>
+                      <button type="button" data-status="afastado" aria-pressed="false">Afastado</button>
+                      <button type="button" data-status="inativo" aria-pressed="false">Inativo</button>
+                    </div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Contato emergência — nome</label><input type="text" value="Renato Prates" data-field="emerg-nome" /></div>
+                    <div class="field"><label>Parentesco</label><input type="text" value="Pai" data-field="emerg-parentesco" /></div>
+                  </div>
+                  <div class="field"><label>Contato emergência — telefone</label><input type="tel" value="(11) 96633-0021" data-field="emerg-telefone" /></div>
+                </div>
+
+                <div class="field-section" data-role="docs-section">
+                  <h3>Documentos & vencimentos</h3>
+                  <div class="field-row">
+                    <div class="field"><label>CNH — número</label><input type="text" value="" data-field="cnh-numero" /></div>
+                    <div class="field"><label>Categoria</label><input type="text" value="" data-field="cnh-categoria" /></div>
+                  </div>
+                  <div class="field"><label>CNH — validade (não aplicável)</label><input type="date" value="" data-field="cnh-validade" data-doc-date /></div>
+                  <div class="field"><label>ASO — validade</label><input type="date" value="2026-10-30" data-field="aso-validade" data-doc-date /></div>
+                  <div class="field"><label>Treinamento / reciclagem</label><input type="text" value="Auditoria de Estoque e Análise de Perdas" data-field="trein-nome" /></div>
+                  <div class="field"><label>Validade do treinamento</label><input type="date" value="2027-02-20" data-field="trein-validade" data-doc-date /></div>
+                  <div class="field"><label>Antecedentes / certidão — validade</label><input type="date" value="2026-09-15" data-field="antecedentes-validade" data-doc-date /></div>
+                </div>
+
+                <div class="field-section" data-role="ferias-section">
+                  <h3>Férias</h3>
+                  <div class="field-row">
+                    <div class="field"><label>Período aquisitivo — início</label><input type="date" value="2025-02-14" data-field="periodo-inicio" /></div>
+                    <div class="field"><label>Período aquisitivo — fim</label><input type="date" value="2026-02-13" data-field="periodo-fim" data-periodo-fim /></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Dias de direito</label><input type="number" value="30" data-field="dias-direito" min="0" max="30" /></div>
+                    <div class="field"><label>Dias já gozados</label><input type="number" value="30" data-field="dias-gozados" min="0" max="30" /></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Próximas férias — início</label><input type="date" value="2027-01-05" data-field="ferias-prox-inicio" /></div>
+                    <div class="field"><label>Próximas férias — fim</label><input type="date" value="2027-02-03" data-field="ferias-prox-fim" /></div>
+                  </div>
+                  <div class="field-derived" data-role="ferias-derived">Saldo e prazo calculados automaticamente.</div>
+                </div>
+
+                <div class="field-section">
+                  <h3>Equipamentos</h3>
+                  <div class="equip-grid" data-role="equip-grid">
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-notebook" /> Notebook</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-celular" /> Celular corporativo</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-monitor" /> Monitor</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-mouse" /> Mouse</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-teclado" /> Teclado</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-veiculo" /> Veículo</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-cracha" /> Crachá de acesso</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-radio" /> Rádio / HT</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-colete" /> Uniforme / colete</label>
+                  </div>
+                  <div class="field"><label>Identificação / patrimônio</label><input type="text" value="NB-1450 · Monitor MN-330" data-field="eq-patrimonio" /></div>
+                  <div class="field"><label>Outros equipamentos</label><input type="text" value="" data-field="eq-outros" /></div>
+                </div>
+
+                <div class="field-section">
+                  <h3>Pendências & observações</h3>
+                  <label class="pending-check"><input type="checkbox" data-field="pendencia-flag" /> Pendência em aberto</label>
+                  <div class="field"><label>Descrição da pendência</label><input type="text" value="" data-field="pendencia-descricao" /></div>
+                  <div class="field">
+                    <label>Observações gerais</label>
+                    <div class="obsbox" contenteditable="true" data-field="observacoes" data-placeholder="Sem observações."></div>
+                  </div>
+                  <div class="detail-footer">
+                    <span class="confirm-remove" data-local-show="false">
+                      Remover este colaborador?
+                      <button class="btn btn-danger btn-sm" type="button" data-role="btn-remove-confirm">Sim, remover</button>
+                      <button class="btn btn-ghost btn-sm" type="button" data-role="btn-remove-cancel">Cancelar</button>
+                    </span>
+                    <button class="btn btn-ghost btn-sm btn-remove-start" type="button" data-role="btn-remove-start">Remover colaborador</button>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ============================================================ -->
+          <!-- 4. Bruno Tavares Lima -->
+          <!-- ============================================================ -->
+          <tr class="row-summary" data-emp data-local-hidden="false">
+            <td><span class="mono">PP-1031</span></td>
+            <td><input type="text" value="Bruno Tavares Lima" data-field="nome" /></td>
+            <td><input type="text" value="Agente de Prevenção de Perdas" data-field="cargo" list="dl-cargo" /></td>
+            <td><input type="text" value="Abordagem e Segurança de Loja" data-field="funcao" list="dl-funcao" /></td>
+            <td><input type="text" value="Eduardo Matias Costa" data-field="gestor" /></td>
+            <td><input type="tel" value="(11) 95522-8871" data-field="telefone" /></td>
+            <td><span class="chip crit" data-role="doc-chip">✕ Crítico</span></td>
+            <td><span class="chip good" data-role="ferias-chip">✓ Em dia</span></td>
+            <td><button class="btn-expand" type="button" aria-expanded="false" aria-label="Ver detalhes">⌄</button></td>
+          </tr>
+          <tr class="row-detail" data-local-hidden="false" data-local-open="false">
+            <td class="detail-cell" colspan="9">
+              <div class="detail-grid">
+                <div class="field-section">
+                  <h3>Dados & contato</h3>
+                  <div class="field"><label>Unidade / local de trabalho</label><input type="text" value="Loja Norte" data-field="unidade" list="dl-unidade" /></div>
+                  <div class="field"><label>Data de admissão</label><input type="date" value="2023-09-04" data-field="admissao" /></div>
+                  <div class="field">
+                    <label>Status</label>
+                    <div class="status-toggle" data-role="status-toggle">
+                      <button type="button" data-status="ativo" aria-pressed="true">Ativo</button>
+                      <button type="button" data-status="afastado" aria-pressed="false">Afastado</button>
+                      <button type="button" data-status="inativo" aria-pressed="false">Inativo</button>
+                    </div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Contato emergência — nome</label><input type="text" value="Camila Tavares" data-field="emerg-nome" /></div>
+                    <div class="field"><label>Parentesco</label><input type="text" value="Esposa" data-field="emerg-parentesco" /></div>
+                  </div>
+                  <div class="field"><label>Contato emergência — telefone</label><input type="tel" value="(11) 95522-0033" data-field="emerg-telefone" /></div>
+                </div>
+
+                <div class="field-section" data-role="docs-section">
+                  <h3>Documentos & vencimentos</h3>
+                  <div class="field-row">
+                    <div class="field"><label>CNH — número</label><input type="text" value="50921144-SP" data-field="cnh-numero" /></div>
+                    <div class="field"><label>Categoria</label><input type="text" value="AB" data-field="cnh-categoria" /></div>
+                  </div>
+                  <div class="field"><label>CNH — validade</label><input type="date" value="2028-03-10" data-field="cnh-validade" data-doc-date /></div>
+                  <div class="field"><label>ASO — validade</label><input type="date" value="2026-08-22" data-field="aso-validade" data-doc-date /></div>
+                  <div class="field"><label>Treinamento / reciclagem</label><input type="text" value="Uso Progressivo da Força e Contenção" data-field="trein-nome" /></div>
+                  <div class="field"><label>Validade do treinamento</label><input type="date" value="2026-11-11" data-field="trein-validade" data-doc-date /></div>
+                  <div class="field"><label>Antecedentes / certidão — validade</label><input type="date" value="2026-12-01" data-field="antecedentes-validade" data-doc-date /></div>
+                </div>
+
+                <div class="field-section" data-role="ferias-section">
+                  <h3>Férias</h3>
+                  <div class="field-row">
+                    <div class="field"><label>Período aquisitivo — início</label><input type="date" value="2025-09-04" data-field="periodo-inicio" /></div>
+                    <div class="field"><label>Período aquisitivo — fim</label><input type="date" value="2026-09-03" data-field="periodo-fim" data-periodo-fim /></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Dias de direito</label><input type="number" value="30" data-field="dias-direito" min="0" max="30" /></div>
+                    <div class="field"><label>Dias já gozados</label><input type="number" value="0" data-field="dias-gozados" min="0" max="30" /></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Próximas férias — início</label><input type="date" value="" data-field="ferias-prox-inicio" /></div>
+                    <div class="field"><label>Próximas férias — fim</label><input type="date" value="" data-field="ferias-prox-fim" /></div>
+                  </div>
+                  <div class="field-derived" data-role="ferias-derived">Saldo e prazo calculados automaticamente.</div>
+                </div>
+
+                <div class="field-section">
+                  <h3>Equipamentos</h3>
+                  <div class="equip-grid" data-role="equip-grid">
+                    <label class="equip-check"><input type="checkbox" data-field="eq-notebook" /> Notebook</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-celular" /> Celular corporativo</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-monitor" /> Monitor</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-mouse" /> Mouse</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-teclado" /> Teclado</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-veiculo" /> Veículo</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-cracha" /> Crachá de acesso</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-radio" /> Rádio / HT</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-colete" /> Uniforme / colete</label>
+                  </div>
+                  <div class="field"><label>Identificação / patrimônio</label><input type="text" value="HT-021 · Colete C-08" data-field="eq-patrimonio" /></div>
+                  <div class="field"><label>Outros equipamentos</label><input type="text" value="" data-field="eq-outros" /></div>
+                </div>
+
+                <div class="field-section">
+                  <h3>Pendências & observações</h3>
+                  <label class="pending-check"><input type="checkbox" data-field="pendencia-flag" /> Pendência em aberto</label>
+                  <div class="field"><label>Descrição da pendência</label><input type="text" value="" data-field="pendencia-descricao" /></div>
+                  <div class="field">
+                    <label>Observações gerais</label>
+                    <div class="obsbox" contenteditable="true" data-field="observacoes" data-placeholder="Sem observações."></div>
+                  </div>
+                  <div class="detail-footer">
+                    <span class="confirm-remove" data-local-show="false">
+                      Remover este colaborador?
+                      <button class="btn btn-danger btn-sm" type="button" data-role="btn-remove-confirm">Sim, remover</button>
+                      <button class="btn btn-ghost btn-sm" type="button" data-role="btn-remove-cancel">Cancelar</button>
+                    </span>
+                    <button class="btn btn-ghost btn-sm btn-remove-start" type="button" data-role="btn-remove-start">Remover colaborador</button>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ============================================================ -->
+          <!-- 5. Camila Rezende Souza -->
+          <!-- ============================================================ -->
+          <tr class="row-summary" data-emp data-local-hidden="false">
+            <td><span class="mono">PP-1035</span></td>
+            <td><input type="text" value="Camila Rezende Souza" data-field="nome" /></td>
+            <td><input type="text" value="Agente de Prevenção de Perdas" data-field="cargo" list="dl-cargo" /></td>
+            <td><input type="text" value="Abordagem e Segurança de Loja" data-field="funcao" list="dl-funcao" /></td>
+            <td><input type="text" value="Eduardo Matias Costa" data-field="gestor" /></td>
+            <td><input type="tel" value="(11) 94411-2298" data-field="telefone" /></td>
+            <td><span class="chip crit" data-role="doc-chip">✕ Crítico</span></td>
+            <td><span class="chip crit" data-role="ferias-chip">✕ Vencido</span></td>
+            <td><button class="btn-expand" type="button" aria-expanded="false" aria-label="Ver detalhes">⌄</button></td>
+          </tr>
+          <tr class="row-detail" data-local-hidden="false" data-local-open="false">
+            <td class="detail-cell" colspan="9">
+              <div class="detail-grid">
+                <div class="field-section">
+                  <h3>Dados & contato</h3>
+                  <div class="field"><label>Unidade / local de trabalho</label><input type="text" value="Loja Sul" data-field="unidade" list="dl-unidade" /></div>
+                  <div class="field"><label>Data de admissão</label><input type="date" value="2024-01-15" data-field="admissao" /></div>
+                  <div class="field">
+                    <label>Status</label>
+                    <div class="status-toggle" data-role="status-toggle">
+                      <button type="button" data-status="ativo" aria-pressed="false">Ativo</button>
+                      <button type="button" data-status="afastado" aria-pressed="true">Afastado</button>
+                      <button type="button" data-status="inativo" aria-pressed="false">Inativo</button>
+                    </div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Contato emergência — nome</label><input type="text" value="Adriano Rezende" data-field="emerg-nome" /></div>
+                    <div class="field"><label>Parentesco</label><input type="text" value="Pai" data-field="emerg-parentesco" /></div>
+                  </div>
+                  <div class="field"><label>Contato emergência — telefone</label><input type="tel" value="(11) 94411-7765" data-field="emerg-telefone" /></div>
+                </div>
+
+                <div class="field-section" data-role="docs-section">
+                  <h3>Documentos & vencimentos</h3>
+                  <div class="field-row">
+                    <div class="field"><label>CNH — número</label><input type="text" value="60233111-SP" data-field="cnh-numero" /></div>
+                    <div class="field"><label>Categoria</label><input type="text" value="B" data-field="cnh-categoria" /></div>
+                  </div>
+                  <div class="field"><label>CNH — validade</label><input type="date" value="2027-07-19" data-field="cnh-validade" data-doc-date /></div>
+                  <div class="field"><label>ASO — validade</label><input type="date" value="2026-08-19" data-field="aso-validade" data-doc-date /></div>
+                  <div class="field"><label>Treinamento / reciclagem</label><input type="text" value="Uso Progressivo da Força e Contenção" data-field="trein-nome" /></div>
+                  <div class="field"><label>Validade do treinamento</label><input type="date" value="2026-08-30" data-field="trein-validade" data-doc-date /></div>
+                  <div class="field"><label>Antecedentes / certidão — validade</label><input type="date" value="2027-03-01" data-field="antecedentes-validade" data-doc-date /></div>
+                </div>
+
+                <div class="field-section" data-role="ferias-section">
+                  <h3>Férias</h3>
+                  <div class="field-row">
+                    <div class="field"><label>Período aquisitivo — início</label><input type="date" value="2024-01-15" data-field="periodo-inicio" /></div>
+                    <div class="field"><label>Período aquisitivo — fim</label><input type="date" value="2025-01-14" data-field="periodo-fim" data-periodo-fim /></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Dias de direito</label><input type="number" value="30" data-field="dias-direito" min="0" max="30" /></div>
+                    <div class="field"><label>Dias já gozados</label><input type="number" value="15" data-field="dias-gozados" min="0" max="30" /></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Próximas férias — início</label><input type="date" value="2026-09-10" data-field="ferias-prox-inicio" /></div>
+                    <div class="field"><label>Próximas férias — fim</label><input type="date" value="2026-10-09" data-field="ferias-prox-fim" /></div>
+                  </div>
+                  <div class="field-derived" data-role="ferias-derived">Saldo e prazo calculados automaticamente.</div>
+                </div>
+
+                <div class="field-section">
+                  <h3>Equipamentos</h3>
+                  <div class="equip-grid" data-role="equip-grid">
+                    <label class="equip-check"><input type="checkbox" data-field="eq-notebook" /> Notebook</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-celular" /> Celular corporativo</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-monitor" /> Monitor</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-mouse" /> Mouse</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-teclado" /> Teclado</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-veiculo" /> Veículo</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-cracha" /> Crachá de acesso</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-radio" /> Rádio / HT</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-colete" /> Uniforme / colete</label>
+                  </div>
+                  <div class="field"><label>Identificação / patrimônio</label><input type="text" value="Crachá suspenso — aguardando retorno" data-field="eq-patrimonio" /></div>
+                  <div class="field"><label>Outros equipamentos</label><input type="text" value="" data-field="eq-outros" /></div>
+                </div>
+
+                <div class="field-section">
+                  <h3>Pendências & observações</h3>
+                  <label class="pending-check"><input type="checkbox" checked data-field="pendencia-flag" /> Pendência em aberto</label>
+                  <div class="field"><label>Descrição da pendência</label><input type="text" value="Em licença médica desde 05/08/2026 — revisar retorno e redistribuição de equipamentos" data-field="pendencia-descricao" /></div>
+                  <div class="field">
+                    <label>Observações gerais</label>
+                    <div class="obsbox" contenteditable="true" data-field="observacoes" data-placeholder="Sem observações.">Prazo de concessão do ciclo 2024/2025 já venceu; férias futuras já agendadas para 10/09.</div>
+                  </div>
+                  <div class="detail-footer">
+                    <span class="confirm-remove" data-local-show="false">
+                      Remover este colaborador?
+                      <button class="btn btn-danger btn-sm" type="button" data-role="btn-remove-confirm">Sim, remover</button>
+                      <button class="btn btn-ghost btn-sm" type="button" data-role="btn-remove-cancel">Cancelar</button>
+                    </span>
+                    <button class="btn btn-ghost btn-sm btn-remove-start" type="button" data-role="btn-remove-start">Remover colaborador</button>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ============================================================ -->
+          <!-- 6. Rafael Cordeiro Nunes -->
+          <!-- ============================================================ -->
+          <tr class="row-summary" data-emp data-local-hidden="false">
+            <td><span class="mono">PP-1040</span></td>
+            <td><input type="text" value="Rafael Cordeiro Nunes" data-field="nome" /></td>
+            <td><input type="text" value="Analista de Inteligência e Investigações" data-field="cargo" list="dl-cargo" /></td>
+            <td><input type="text" value="Investigação de Perdas Internas" data-field="funcao" list="dl-funcao" /></td>
+            <td><input type="text" value="Marina Salgado Ferreira" data-field="gestor" /></td>
+            <td><input type="tel" value="(11) 93300-6654" data-field="telefone" /></td>
+            <td><span class="chip crit" data-role="doc-chip">✕ Crítico</span></td>
+            <td><span class="chip good" data-role="ferias-chip">✓ Em dia</span></td>
+            <td><button class="btn-expand" type="button" aria-expanded="false" aria-label="Ver detalhes">⌄</button></td>
+          </tr>
+          <tr class="row-detail" data-local-hidden="false" data-local-open="false">
+            <td class="detail-cell" colspan="9">
+              <div class="detail-grid">
+                <div class="field-section">
+                  <h3>Dados & contato</h3>
+                  <div class="field"><label>Unidade / local de trabalho</label><input type="text" value="Regional Sudeste" data-field="unidade" list="dl-unidade" /></div>
+                  <div class="field"><label>Data de admissão</label><input type="date" value="2020-11-23" data-field="admissao" /></div>
+                  <div class="field">
+                    <label>Status</label>
+                    <div class="status-toggle" data-role="status-toggle">
+                      <button type="button" data-status="ativo" aria-pressed="true">Ativo</button>
+                      <button type="button" data-status="afastado" aria-pressed="false">Afastado</button>
+                      <button type="button" data-status="inativo" aria-pressed="false">Inativo</button>
+                    </div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Contato emergência — nome</label><input type="text" value="Fernanda Cordeiro" data-field="emerg-nome" /></div>
+                    <div class="field"><label>Parentesco</label><input type="text" value="Esposa" data-field="emerg-parentesco" /></div>
+                  </div>
+                  <div class="field"><label>Contato emergência — telefone</label><input type="tel" value="(11) 93300-1123" data-field="emerg-telefone" /></div>
+                </div>
+
+                <div class="field-section" data-role="docs-section">
+                  <h3>Documentos & vencimentos</h3>
+                  <div class="field-row">
+                    <div class="field"><label>CNH — número</label><input type="text" value="28871199-SP" data-field="cnh-numero" /></div>
+                    <div class="field"><label>Categoria</label><input type="text" value="B" data-field="cnh-categoria" /></div>
+                  </div>
+                  <div class="field"><label>CNH — validade</label><input type="date" value="2026-09-12" data-field="cnh-validade" data-doc-date /></div>
+                  <div class="field"><label>ASO — validade</label><input type="date" value="2027-04-04" data-field="aso-validade" data-doc-date /></div>
+                  <div class="field"><label>Treinamento / reciclagem</label><input type="text" value="Técnicas de Entrevista e Investigação" data-field="trein-nome" /></div>
+                  <div class="field"><label>Validade do treinamento</label><input type="date" value="2026-08-24" data-field="trein-validade" data-doc-date /></div>
+                  <div class="field"><label>Antecedentes / certidão — validade</label><input type="date" value="2026-11-30" data-field="antecedentes-validade" data-doc-date /></div>
+                </div>
+
+                <div class="field-section" data-role="ferias-section">
+                  <h3>Férias</h3>
+                  <div class="field-row">
+                    <div class="field"><label>Período aquisitivo — início</label><input type="date" value="2025-11-23" data-field="periodo-inicio" /></div>
+                    <div class="field"><label>Período aquisitivo — fim</label><input type="date" value="2026-11-22" data-field="periodo-fim" data-periodo-fim /></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Dias de direito</label><input type="number" value="30" data-field="dias-direito" min="0" max="30" /></div>
+                    <div class="field"><label>Dias já gozados</label><input type="number" value="5" data-field="dias-gozados" min="0" max="30" /></div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field"><label>Próximas férias — início</label><input type="date" value="2026-12-07" data-field="ferias-prox-inicio" /></div>
+                    <div class="field"><label>Próximas férias — fim</label><input type="date" value="2027-01-05" data-field="ferias-prox-fim" /></div>
+                  </div>
+                  <div class="field-derived" data-role="ferias-derived">Saldo e prazo calculados automaticamente.</div>
+                </div>
+
+                <div class="field-section">
+                  <h3>Equipamentos</h3>
+                  <div class="equip-grid" data-role="equip-grid">
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-notebook" /> Notebook</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-celular" /> Celular corporativo</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-monitor" /> Monitor</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-mouse" /> Mouse</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-teclado" /> Teclado</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-veiculo" /> Veículo</label>
+                    <label class="equip-check"><input type="checkbox" checked data-field="eq-cracha" /> Crachá de acesso</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-radio" /> Rádio / HT</label>
+                    <label class="equip-check"><input type="checkbox" data-field="eq-colete" /> Uniforme / colete</label>
+                  </div>
+                  <div class="field"><label>Identificação / patrimônio</label><input type="text" value="NB-1876 · Placa QRX-9J41" data-field="eq-patrimonio" /></div>
+                  <div class="field"><label>Outros equipamentos</label><input type="text" value="" data-field="eq-outros" /></div>
+                </div>
+
+                <div class="field-section">
+                  <h3>Pendências & observações</h3>
+                  <label class="pending-check"><input type="checkbox" data-field="pendencia-flag" /> Pendência em aberto</label>
+                  <div class="field"><label>Descrição da pendência</label><input type="text" value="" data-field="pendencia-descricao" /></div>
+                  <div class="field">
+                    <label>Observações gerais</label>
+                    <div class="obsbox" contenteditable="true" data-field="observacoes" data-placeholder="Sem observações."></div>
+                  </div>
+                  <div class="detail-footer">
+                    <span class="confirm-remove" data-local-show="false">
+                      Remover este colaborador?
+                      <button class="btn btn-danger btn-sm" type="button" data-role="btn-remove-confirm">Sim, remover</button>
+                      <button class="btn btn-ghost btn-sm" type="button" data-role="btn-remove-cancel">Cancelar</button>
+                    </span>
+                    <button class="btn btn-ghost btn-sm btn-remove-start" type="button" data-role="btn-remove-start">Remover colaborador</button>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="empty-state">Nenhum colaborador encontrado com os filtros atuais.</div>
+  </div>
+
+  <p class="foot-note">
+    Este painel é um documento vivo: alterações em qualquer campo (nome, cargo, vencimentos, férias, equipamentos etc.) ficam salvas automaticamente
+    para todos que abrirem este link. Os indicadores e o gráfico de status são recalculados a partir dos dados da tabela — não precisam de atualização manual.
+    "Crítico" = vencido ou a vencer em até 7 dias · "Atenção" = a vencer em até 30 dias. Prazo de férias considera o limite legal de concessão
+    (fim do período aquisitivo + 11 meses).
+  </p>
+</div>
+
+<datalist id="dl-cargo">
+  <option value="Gerente de Prevenção de Perdas"></option>
+  <option value="Coordenador de Prevenção de Perdas"></option>
+  <option value="Supervisor de Prevenção de Perdas"></option>
+  <option value="Analista de Prevenção de Perdas"></option>
+  <option value="Analista de Inteligência e Investigações"></option>
+  <option value="Agente de Prevenção de Perdas"></option>
+</datalist>
+<datalist id="dl-funcao">
+  <option value="Gestão Regional"></option>
+  <option value="Supervisão de Loja"></option>
+  <option value="Monitoramento CFTV & Auditoria"></option>
+  <option value="Abordagem e Segurança de Loja"></option>
+  <option value="Investigação de Perdas Internas"></option>
+  <option value="Auditoria de Estoque"></option>
+</datalist>
+<datalist id="dl-unidade">
+  <option value="Regional Sudeste"></option>
+  <option value="Loja Centro"></option>
+  <option value="Loja Norte"></option>
+  <option value="Loja Sul"></option>
+  <option value="Loja Leste"></option>
+  <option value="Centro de Distribuição"></option>
+</datalist>
+
+<template id="tpl-summary">
+  <tr class="row-summary" data-emp data-local-hidden="false">
+    <td><span class="mono" data-role="mat-slot"></span></td>
+    <td><input type="text" value="" data-field="nome" placeholder="Nome completo" /></td>
+    <td><input type="text" value="" data-field="cargo" list="dl-cargo" placeholder="Cargo" /></td>
+    <td><input type="text" value="" data-field="funcao" list="dl-funcao" placeholder="Função" /></td>
+    <td><input type="text" value="" data-field="gestor" placeholder="Gestor direto" /></td>
+    <td><input type="tel" value="" data-field="telefone" placeholder="Telefone" /></td>
+    <td><span class="chip none" data-role="doc-chip">– Sem dados</span></td>
+    <td><span class="chip none" data-role="ferias-chip">– Sem dados</span></td>
+    <td><button class="btn-expand" type="button" aria-expanded="false" aria-label="Ver detalhes">⌄</button></td>
+  </tr>
+</template>
+
+<template id="tpl-detail">
+  <tr class="row-detail" data-local-hidden="false" data-local-open="true">
+    <td class="detail-cell" colspan="9">
+      <div class="detail-grid">
+        <div class="field-section">
+          <h3>Dados & contato</h3>
+          <div class="field"><label>Unidade / local de trabalho</label><input type="text" value="" data-field="unidade" list="dl-unidade" /></div>
+          <div class="field"><label>Data de admissão</label><input type="date" value="" data-field="admissao" /></div>
+          <div class="field">
+            <label>Status</label>
+            <div class="status-toggle" data-role="status-toggle">
+              <button type="button" data-status="ativo" aria-pressed="true">Ativo</button>
+              <button type="button" data-status="afastado" aria-pressed="false">Afastado</button>
+              <button type="button" data-status="inativo" aria-pressed="false">Inativo</button>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Contato emergência — nome</label><input type="text" value="" data-field="emerg-nome" /></div>
+            <div class="field"><label>Parentesco</label><input type="text" value="" data-field="emerg-parentesco" /></div>
+          </div>
+          <div class="field"><label>Contato emergência — telefone</label><input type="tel" value="" data-field="emerg-telefone" /></div>
+        </div>
+
+        <div class="field-section" data-role="docs-section">
+          <h3>Documentos & vencimentos</h3>
+          <div class="field-row">
+            <div class="field"><label>CNH — número</label><input type="text" value="" data-field="cnh-numero" /></div>
+            <div class="field"><label>Categoria</label><input type="text" value="" data-field="cnh-categoria" /></div>
+          </div>
+          <div class="field"><label>CNH — validade</label><input type="date" value="" data-field="cnh-validade" data-doc-date /></div>
+          <div class="field"><label>ASO — validade</label><input type="date" value="" data-field="aso-validade" data-doc-date /></div>
+          <div class="field"><label>Treinamento / reciclagem</label><input type="text" value="" data-field="trein-nome" /></div>
+          <div class="field"><label>Validade do treinamento</label><input type="date" value="" data-field="trein-validade" data-doc-date /></div>
+          <div class="field"><label>Antecedentes / certidão — validade</label><input type="date" value="" data-field="antecedentes-validade" data-doc-date /></div>
+        </div>
+
+        <div class="field-section" data-role="ferias-section">
+          <h3>Férias</h3>
+          <div class="field-row">
+            <div class="field"><label>Período aquisitivo — início</label><input type="date" value="" data-field="periodo-inicio" /></div>
+            <div class="field"><label>Período aquisitivo — fim</label><input type="date" value="" data-field="periodo-fim" data-periodo-fim /></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Dias de direito</label><input type="number" value="30" data-field="dias-direito" min="0" max="30" /></div>
+            <div class="field"><label>Dias já gozados</label><input type="number" value="0" data-field="dias-gozados" min="0" max="30" /></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Próximas férias — início</label><input type="date" value="" data-field="ferias-prox-inicio" /></div>
+            <div class="field"><label>Próximas férias — fim</label><input type="date" value="" data-field="ferias-prox-fim" /></div>
+          </div>
+          <div class="field-derived" data-role="ferias-derived">Saldo e prazo calculados automaticamente.</div>
+        </div>
+
+        <div class="field-section">
+          <h3>Equipamentos</h3>
+          <div class="equip-grid" data-role="equip-grid">
+            <label class="equip-check"><input type="checkbox" data-field="eq-notebook" /> Notebook</label>
+            <label class="equip-check"><input type="checkbox" data-field="eq-celular" /> Celular corporativo</label>
+            <label class="equip-check"><input type="checkbox" data-field="eq-monitor" /> Monitor</label>
+            <label class="equip-check"><input type="checkbox" data-field="eq-mouse" /> Mouse</label>
+            <label class="equip-check"><input type="checkbox" data-field="eq-teclado" /> Teclado</label>
+            <label class="equip-check"><input type="checkbox" data-field="eq-veiculo" /> Veículo</label>
+            <label class="equip-check"><input type="checkbox" data-field="eq-cracha" /> Crachá de acesso</label>
+            <label class="equip-check"><input type="checkbox" data-field="eq-radio" /> Rádio / HT</label>
+            <label class="equip-check"><input type="checkbox" data-field="eq-colete" /> Uniforme / colete</label>
+          </div>
+          <div class="field"><label>Identificação / patrimônio</label><input type="text" value="" data-field="eq-patrimonio" /></div>
+          <div class="field"><label>Outros equipamentos</label><input type="text" value="" data-field="eq-outros" /></div>
+        </div>
+
+        <div class="field-section">
+          <h3>Pendências & observações</h3>
+          <label class="pending-check"><input type="checkbox" data-field="pendencia-flag" /> Pendência em aberto</label>
+          <div class="field"><label>Descrição da pendência</label><input type="text" value="" data-field="pendencia-descricao" /></div>
+          <div class="field">
+            <label>Observações gerais</label>
+            <div class="obsbox" contenteditable="true" data-field="observacoes" data-placeholder="Sem observações."></div>
+          </div>
+          <div class="detail-footer">
+            <span class="confirm-remove" data-local-show="false">
+              Remover este colaborador?
+              <button class="btn btn-danger btn-sm" type="button" data-role="btn-remove-confirm">Sim, remover</button>
+              <button class="btn btn-ghost btn-sm" type="button" data-role="btn-remove-cancel">Cancelar</button>
+            </span>
+            <button class="btn btn-ghost btn-sm btn-remove-start" type="button" data-role="btn-remove-start">Remover colaborador</button>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+</template>
+
+<script>
+  (function () {
+    "use strict";
+
+    var MS_DAY = 86400000;
+
+    function today() {
+      var d = new Date();
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
+
+    function parseDate(str) {
+      if (!str) return null;
+      var d = new Date(str + "T00:00:00");
+      return isNaN(d.getTime()) ? null : d;
+    }
+
+    function daysUntil(str) {
+      var d = parseDate(str);
+      if (!d) return null;
+      return Math.round((d.getTime() - today().getTime()) / MS_DAY);
+    }
+
+    function statusFromDays(days) {
+      if (days === null) return "none";
+      if (days <= 7) return "crit";
+      if (days <= 30) return "warn";
+      return "good";
+    }
+
+    function worseOf(a, b) {
+      var rank = { crit: 3, warn: 2, good: 1, none: 0 };
+      return rank[b] > rank[a] ? b : a;
+    }
+
+    function fmtBRFromDate(d) {
+      return String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0") + "/" + d.getFullYear();
+    }
+
+    function chipHtmlFor(status, labels) {
+      var map = { good: "✓ " + labels.good, warn: "⚠ " + labels.warn, crit: "✕ " + labels.crit, none: "– " + labels.none };
+      return { cls: "chip " + status, text: map[status] };
+    }
+
+    function applyChip(el, status, labels) {
+      var v = chipHtmlFor(status, labels);
+      el.className = v.cls;
+      el.textContent = v.text;
+    }
+
+    /* ---------- per-row recompute (runs inside user gestures) ---------- */
+
+    function recomputeDocs(detailRow, summaryRow) {
+      var section = detailRow.querySelector('[data-role="docs-section"]');
+      var dateInputs = section.querySelectorAll("[data-doc-date]");
+      var worst = "none";
+      dateInputs.forEach(function (inp) {
+        if (!inp.value) return;
+        var s = statusFromDays(daysUntil(inp.value));
+        worst = worseOf(worst, s);
+      });
+      var chip = summaryRow.querySelector('[data-role="doc-chip"]');
+      if (chip) applyChip(chip, worst, { good: "Em dia", warn: "Atenção", crit: "Crítico", none: "Sem dados" });
+      return worst;
+    }
+
+    function addMonths(d, n) {
+      var r = new Date(d.getTime());
+      r.setMonth(r.getMonth() + n);
+      return r;
+    }
+
+    function recomputeFerias(detailRow, summaryRow) {
+      var section = detailRow.querySelector('[data-role="ferias-section"]');
+      var fimInp = section.querySelector("[data-periodo-fim]");
+      var direitoInp = section.querySelector('[data-field="dias-direito"]');
+      var gozadosInp = section.querySelector('[data-field="dias-gozados"]');
+      var proxInicioInp = section.querySelector('[data-field="ferias-prox-inicio"]');
+      var derived = section.querySelector('[data-role="ferias-derived"]');
+      var chip = summaryRow.querySelector('[data-role="ferias-chip"]');
+
+      var fim = parseDate(fimInp.value);
+      var direito = parseInt(direitoInp.value, 10) || 0;
+      var gozados = parseInt(gozadosInp.value, 10) || 0;
+      var saldo = Math.max(0, direito - gozados);
+
+      if (!fim) {
+        if (chip) applyChip(chip, "none", { good: "Em dia", warn: "Atenção", crit: "Vencido", none: "Sem dados" });
+        if (derived) derived.innerHTML = "Informe o período aquisitivo para calcular o prazo legal.";
+        return "none";
+      }
+
+      var limite = addMonths(fim, 11);
+      var diasParaLimite = Math.round((limite.getTime() - today().getTime()) / MS_DAY);
+      var status = "good";
+      if (diasParaLimite < 0) status = "crit";
+      else if (diasParaLimite <= 60) status = "warn";
+
+      var agendadas = !!proxInicioInp.value;
+
+      if (derived) {
+        derived.innerHTML =
+          "Saldo: <strong>" + saldo + " dia(s)</strong> · Prazo legal de concessão: <strong>" + fmtBRFromDate(limite) + "</strong>" +
+          (agendadas ? " · próximas férias agendadas" : saldo > 0 ? " · ainda não agendadas" : "");
+      }
+
+      if (chip) applyChip(chip, status, { good: "Em dia", warn: "Atenção", crit: "Vencido", none: "Sem dados" });
+      return status;
+    }
+
+    function recomputeRow(summaryRow) {
+      var detailRow = summaryRow.nextElementSibling;
+      if (!detailRow || !detailRow.classList.contains("row-detail")) return;
+      recomputeDocs(detailRow, summaryRow);
+      recomputeFerias(detailRow, summaryRow);
+    }
+
+    /* ---------- global recompute (KPIs, status bar) — safe outside gestures ---------- */
+
+    function recomputeAll() {
+      var summaries = document.querySelectorAll("#roster-body > tr.row-summary");
+      var headcountActive = 0;
+      var docsWorstCounts = { good: 0, warn: 0, crit: 0, none: 0 };
+      var docsAttention = 0;
+      var feriasAttention = 0;
+      var pendCount = 0;
+
+      summaries.forEach(function (row) {
+        var detail = row.nextElementSibling;
+        if (!detail) return;
+
+        var statusToggle = detail.querySelector('[data-role="status-toggle"]');
+        var isAtivo = statusToggle && statusToggle.querySelector('[data-status="ativo"][aria-pressed="true"]');
+        if (isAtivo) headcountActive++;
+
+        var docChip = row.querySelector('[data-role="doc-chip"]');
+        var docStatus = docChip ? docChip.className.replace("chip ", "").trim() : "none";
+        docsWorstCounts[docStatus] = (docsWorstCounts[docStatus] || 0) + 1;
+        if (docStatus === "warn" || docStatus === "crit") docsAttention++;
+
+        var feriasChip = row.querySelector('[data-role="ferias-chip"]');
+        var feriasStatus = feriasChip ? feriasChip.className.replace("chip ", "").trim() : "none";
+        if (feriasStatus === "warn" || feriasStatus === "crit") feriasAttention++;
+
+        var pendFlag = detail.querySelector('[data-field="pendencia-flag"]');
+        if (pendFlag && pendFlag.checked) pendCount++;
+      });
+
+      var total = summaries.length;
+      document.getElementById("kpi-headcount").textContent = String(headcountActive);
+      document.getElementById("kpi-headcount-sub").textContent = total + " colaborador(es) no total";
+
+      var docsEl = document.getElementById("kpi-docs");
+      docsEl.textContent = String(docsAttention);
+      docsEl.className = "kpi-value " + (docsAttention > 0 ? "tone-crit" : "tone-good");
+      document.getElementById("kpi-docs-sub").textContent = "de " + total + " colaborador(es)";
+
+      var feriasEl = document.getElementById("kpi-ferias");
+      feriasEl.textContent = String(feriasAttention);
+      feriasEl.className = "kpi-value " + (feriasAttention > 0 ? "tone-warn" : "tone-good");
+      document.getElementById("kpi-ferias-sub").textContent = "vencidas ou a vencer em 60 dias";
+
+      var pendEl = document.getElementById("kpi-pend");
+      pendEl.textContent = String(pendCount);
+      pendEl.className = "kpi-value " + (pendCount > 0 ? "tone-crit" : "tone-good");
+      document.getElementById("kpi-pend-sub").textContent = "aguardando ação";
+
+      var docsTotal = total || 1;
+      document.getElementById("seg-good").style.width = (100 * docsWorstCounts.good / docsTotal) + "%";
+      document.getElementById("seg-warn").style.width = (100 * docsWorstCounts.warn / docsTotal) + "%";
+      document.getElementById("seg-crit").style.width = (100 * docsWorstCounts.crit / docsTotal) + "%";
+      document.getElementById("seg-none").style.width = (100 * docsWorstCounts.none / docsTotal) + "%";
+    }
+
+    /* ---------- filtering (local-only, never synced) ---------- */
+
+    function applyFilters() {
+      var q = document.getElementById("search-input").value.trim().toLowerCase();
+      var statusFilter = document.getElementById("filter-status").value;
+      var docFilter = document.getElementById("filter-doc").value;
+      var summaries = document.querySelectorAll("#roster-body > tr.row-summary");
+      var visibleCount = 0;
+
+      summaries.forEach(function (row) {
+        var detail = row.nextElementSibling;
+        var haystack = ["nome", "cargo", "funcao", "gestor"]
+          .map(function (f) {
+            var inp = row.querySelector('[data-field="' + f + '"]');
+            return inp ? inp.value : "";
+          })
+          .concat([row.querySelector(".mono") ? row.querySelector(".mono").textContent : ""])
+          .join(" ")
+          .toLowerCase();
+
+        var matchesQuery = !q || haystack.indexOf(q) !== -1;
+
+        var matchesStatus = true;
+        if (statusFilter && detail) {
+          var toggle = detail.querySelector('[data-role="status-toggle"]');
+          var pressed = toggle ? toggle.querySelector('[aria-pressed="true"]') : null;
+          matchesStatus = pressed && pressed.getAttribute("data-status") === statusFilter;
+        }
+
+        var matchesDoc = true;
+        if (docFilter) {
+          var docChip = row.querySelector('[data-role="doc-chip"]');
+          var docStatus = docChip ? docChip.className.replace("chip ", "").trim() : "none";
+          matchesDoc = docStatus === docFilter;
+        }
+
+        var show = matchesQuery && matchesStatus && matchesDoc;
+        row.setAttribute("data-local-hidden", show ? "false" : "true");
+        if (detail) detail.setAttribute("data-local-hidden", show ? "false" : "true");
+        if (show) visibleCount++;
+      });
+
+      document.getElementById("empty-state").style.display = visibleCount === 0 ? "block" : "none";
+    }
+
+    /* ---------- matricula generation ---------- */
+
+    function nextMatricula() {
+      var max = 1000;
+      document.querySelectorAll("#roster-body .mono").forEach(function (span) {
+        var m = span.textContent.match(/PP-(\d+)/);
+        if (m) max = Math.max(max, parseInt(m[1], 10));
+      });
+      return "PP-" + (max + 1);
+    }
+
+    /* ---------- event wiring ---------- */
+
+    function wireRow(summaryRow) {
+      var detailRow = summaryRow.nextElementSibling;
+      var expandBtn = summaryRow.querySelector(".btn-expand");
+
+      expandBtn.addEventListener("click", function () {
+        var open = detailRow.getAttribute("data-local-open") === "true";
+        detailRow.setAttribute("data-local-open", open ? "false" : "true");
+        expandBtn.setAttribute("aria-expanded", open ? "false" : "true");
+      });
+
+      if (!detailRow) return;
+
+      detailRow.addEventListener("input", function (e) {
+        if (e.target.matches("[data-doc-date]")) recomputeDocs(detailRow, summaryRow);
+        if (
+          e.target.matches("[data-periodo-fim]") ||
+          e.target.matches('[data-field="dias-direito"]') ||
+          e.target.matches('[data-field="dias-gozados"]') ||
+          e.target.matches('[data-field="ferias-prox-inicio"]')
+        ) {
+          recomputeFerias(detailRow, summaryRow);
+        }
+        recomputeAll();
+      });
+
+      var statusToggle = detailRow.querySelector('[data-role="status-toggle"]');
+      statusToggle.addEventListener("click", function (e) {
+        var btn = e.target.closest("button[data-status]");
+        if (!btn) return;
+        statusToggle.querySelectorAll("button").forEach(function (b) {
+          b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+        });
+        recomputeAll();
+      });
+
+      var removeStart = detailRow.querySelector('[data-role="btn-remove-start"]');
+      var removeConfirm = detailRow.querySelector('[data-role="btn-remove-confirm"]');
+      var removeCancel = detailRow.querySelector('[data-role="btn-remove-cancel"]');
+      var confirmWrap = detailRow.querySelector(".confirm-remove");
+
+      removeStart.addEventListener("click", function () {
+        confirmWrap.setAttribute("data-local-show", "true");
+      });
+      removeCancel.addEventListener("click", function () {
+        confirmWrap.setAttribute("data-local-show", "false");
+      });
+      removeConfirm.addEventListener("click", function () {
+        summaryRow.remove();
+        detailRow.remove();
+        recomputeAll();
+        applyFilters();
+      });
+    }
+
+    function wireAllRows() {
+      document.querySelectorAll("#roster-body > tr.row-summary").forEach(wireRow);
+    }
+
+    document.getElementById("btn-add").addEventListener("click", function () {
+      var tbody = document.getElementById("roster-body");
+      var summaryTpl = document.getElementById("tpl-summary").content.cloneNode(true);
+      var detailTpl = document.getElementById("tpl-detail").content.cloneNode(true);
+
+      var newSummary = summaryTpl.querySelector("tr");
+      var newDetail = detailTpl.querySelector("tr");
+      newSummary.querySelector('[data-role="mat-slot"]').textContent = nextMatricula();
+
+      tbody.appendChild(newSummary);
+      tbody.appendChild(newDetail);
+
+      wireRow(newSummary);
+      recomputeDocs(newDetail, newSummary);
+      recomputeFerias(newDetail, newSummary);
+      recomputeAll();
+      applyFilters();
+
+      newDetail.setAttribute("data-local-open", "true");
+      newSummary.querySelector(".btn-expand").setAttribute("aria-expanded", "true");
+      var nomeInput = newSummary.querySelector('[data-field="nome"]');
+      if (nomeInput) nomeInput.focus();
+      newSummary.scrollIntoView({ block: "center", behavior: "smooth" });
+    });
+
+    document.getElementById("search-input").addEventListener("input", applyFilters);
+    document.getElementById("filter-status").addEventListener("change", applyFilters);
+    document.getElementById("filter-doc").addEventListener("change", applyFilters);
+    document.getElementById("btn-clear-filters").addEventListener("click", function () {
+      document.getElementById("search-input").value = "";
+      document.getElementById("filter-status").value = "";
+      document.getElementById("filter-doc").value = "";
+      applyFilters();
+    });
+
+    document.addEventListener("claude:edit", function () {
+      recomputeAll();
+      applyFilters();
+    });
+
+    document.addEventListener(
+      "claude:sync-off",
+      function () {
+        document.getElementById("readonly-banner").classList.add("show");
+        document.querySelectorAll("#btn-add, .btn-expand").forEach(function (el) {
+          if (el.id === "btn-add") el.disabled = true;
+        });
+      },
+      true
+    );
+
+    function updateClock() {
+      var d = new Date();
+      var label = d.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" });
+      document.getElementById("clock-label").textContent = label.charAt(0).toUpperCase() + label.slice(1);
+    }
+
+    wireAllRows();
+    recomputeAll();
+    applyFilters();
+    updateClock();
+  })();
+</script>
