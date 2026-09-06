@@ -43,8 +43,13 @@ stores:
   - id: kabum
     name: "KaBuM!"
     method: scraping_pagina_publica
-    status: active
+    status: pending_verification
     reliability_score: 85
+    notes: >
+      Página inicial acessível, mas não confirmamos que a KaBuM! realmente
+      vende os 6 produtos-alvo (é uma loja focada em tecnologia/hardware,
+      pode não ter linha branca no catálogo). Fica fora do monitoramento
+      até alguém confirmar manualmente um link de produto real.
 
   - id: casas_bahia
     name: "Casas Bahia"

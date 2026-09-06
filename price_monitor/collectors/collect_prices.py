@@ -64,8 +64,10 @@ def check_identity(product: dict, extracted: dict) -> tuple[str, str]:
             return "baixa", f"nome retornado contém código excluído '{excluded['code']}' ({excluded['reason']})"
 
     found_gtin = extracted.get("gtin")
+    found_sku = extracted.get("sku")
+    self_referential_gtin = found_gtin and found_sku and normalize_code(str(found_gtin)) == normalize_code(str(found_sku))
     candidates = product.get("ean_candidates")
-    if found_gtin and candidates:
+    if found_gtin and candidates and not self_referential_gtin:
         known_eans = {normalize_code(str(c["value"])) for c in candidates}
         if normalize_code(str(found_gtin)) not in known_eans:
             return "baixa", (
