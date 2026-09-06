@@ -1,0 +1,31 @@
+name: Coletar preços
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Coletar preços
+        run: python -m price_monitor.collectors.collect_prices
+
+      - name: Commitar banco atualizado
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add price_monitor/data/monitor.db
+          git diff --cached --quiet && echo "Sem mudanças no banco." || git commit -m "Atualiza histórico de preços [skip ci]"
+          git push
