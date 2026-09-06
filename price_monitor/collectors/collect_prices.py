@@ -51,21 +51,29 @@ def load_listings() -> list:
 
 def check_identity(product: dict, extracted: dict) -> tuple[str, str]:
     """Retorna (confidence, motivo). Nunca sobe a confiança declarada no
-    catálogo, só pode rebaixar."""
+    catálogo, só pode rebaixar - e só quando há um sinal real de
+    divergência (não confundir SKU interno da loja com o modelo
+    comercial do fabricante, são namespaces diferentes)."""
     base_confidence = product.get("identity_confidence", "media")
     name = (extracted.get("name") or "").upper()
+    name_norm = normalize_code(name)
 
     for excluded in product.get("excluded_models", []):
         code = normalize_code(str(excluded.get("code", "")))
-        if code and code in normalize_code(name):
+        if code and code in name_norm:
             return "baixa", f"nome retornado contém código excluído '{excluded['code']}' ({excluded['reason']})"
 
-    expected_sku = product.get("sku")
-    found_sku = extracted.get("sku")
-    if expected_sku and found_sku and normalize_code(expected_sku) != normalize_code(found_sku):
-        return "baixa", f"SKU esperado '{expected_sku}' não bate com SKU retornado '{found_sku}'"
+    found_gtin = extracted.get("gtin")
+    candidates = product.get("ean_candidates")
+    if found_gtin and candidates:
+        known_eans = {normalize_code(str(c["value"])) for c in candidates}
+        if normalize_code(str(found_gtin)) not in known_eans:
+            return "baixa", (
+                f"GTIN retornado '{found_gtin}' não bate com nenhum EAN candidato conhecido"
+            )
+        return base_confidence, f"GTIN '{found_gtin}' confere com EAN candidato do catálogo"
 
-    return base_confidence, "sem sinais de divergência encontrados"
+    return base_confidence, "URL confirmada manualmente na pesquisa; sem sinal de divergência no nome/GTIN retornado"
 
 
 def fetch_and_extract(store_id: str, url: str) -> dict | None:
