@@ -25,7 +25,8 @@ def send_whatsapp_message(body: str) -> dict:
         auth=(sid, token),
         timeout=30,
     )
-    response.raise_for_status()
+    if not response.ok:
+        raise RuntimeError(f"Twilio respondeu {response.status_code}: {response.text}")
     return response.json()
 
 
