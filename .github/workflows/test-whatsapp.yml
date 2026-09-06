@@ -16,6 +16,12 @@ jobs:
       - name: Instalar dependências
         run: pip install requests
 
+      - name: Listar Content Templates disponíveis
+        env:
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+        run: python -m price_monitor.notifications.list_templates
+
       - name: Enviar mensagem de teste
         env:
           TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
