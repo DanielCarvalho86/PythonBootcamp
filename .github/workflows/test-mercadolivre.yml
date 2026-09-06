@@ -1,0 +1,23 @@
+name: Teste de autenticação Mercado Livre
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-auth:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Testar autenticação e busca
+        env:
+          ML_CLIENT_ID: ${{ secrets.ML_CLIENT_ID }}
+          ML_CLIENT_SECRET: ${{ secrets.ML_CLIENT_SECRET }}
+        run: python -m price_monitor.collectors.test_mercadolivre_auth
