@@ -1,0 +1,54 @@
+# URLs reais de produto confirmadas até agora, uma entrada por (produto, loja).
+# Só incluímos aqui URLs que apareceram em fontes verificáveis durante a
+# pesquisa de identificação ou na inspeção de estrutura - nunca uma URL
+# adivinhada. Produtos/lojas sem URL aqui simplesmente não são
+# monitorados ainda nessa combinação (não inventamos link).
+
+listings:
+  - product_id: geladeira_electrolux_it70
+    store_id: electrolux_oficial
+    url: "https://loja.electrolux.com.br/geladeira-electrolux-frost-free-inverter-481l-efficient-com-autosense-smartbivolt-duplex-cor-branca---it70-/p"
+    variant_note: "IT70 branca"
+
+  - product_id: geladeira_electrolux_it70
+    store_id: electrolux_oficial
+    url: "https://loja.electrolux.com.br/geladeira-electrolux-frost-free-inverter-481l-efficient-com-autosense-smartbivolt-duplex-cor-black-inox-look--it70b-/p"
+    variant_note: "IT70B black inox look"
+
+  - product_id: forno_electrolux_oe8el
+    store_id: electrolux_oficial
+    url: "https://loja.electrolux.com.br/forno-de-embutir-eletrico-electrolux-80l-efficient-com-perfectcook--oe8el-/p"
+
+  - product_id: forno_electrolux_oe8el
+    store_id: fast_shop
+    url: "https://site.fastshop.com.br/forno-eletrico-electrolux-80-litros-oe8el-220v-155810/p"
+
+  - product_id: lava_loucas_electrolux_lp10e
+    store_id: electrolux_oficial
+    url: "https://loja.electrolux.com.br/lava-louca-electrolux-10-servicos-preta-com-programa-lava-e-seca-50-min-lp10e/p"
+
+  - product_id: lava_loucas_electrolux_lp10e
+    store_id: fast_shop
+    url: "https://site.fastshop.com.br/lava-loucas-electrolux-preta--10-servicos-com-programa-lava-e-seca-50----lp10e-exlp10e_prd/p"
+
+  - product_id: lava_seca_midea_13kg_healthguard
+    store_id: midea_oficial
+    url: "https://www.midea.com.br/lava-e-seca-13kg-midea-healthguard-titanium-conectada/p"
+    variant_note: "URL genérica da linha - validar se o SKU retornado é o GK-01/127V antes de confiar no preço"
+
+  - product_id: lava_seca_midea_11kg_healthguard_slim
+    store_id: midea_oficial
+    url: "https://www.midea.com.br/lava-e-seca-11kg-titanium-slim-healthguard-conectada-midea/p"
+
+  - product_id: geladeira_brastemp_bro85mk
+    store_id: brastemp_oficial
+    url: "https://www.brastemp.com.br/geladeira-french-door-3-portas-inox-design-e-tecnologia-premium-bro85mk-1/p"
+
+  - product_id: geladeira_brastemp_bro85mk
+    store_id: fast_shop
+    url: "https://site.fastshop.com.br/-refrigerador-french-door-brastemp-de-03-portas-frost-free-com-559-litros-inox---bro85mk-brbro85mk_prd/p"
+
+  - product_id: geladeira_brastemp_bro85mk
+    store_id: amazon_br
+    url: "https://www.amazon.com.br/Geladeira-French-Tecnologia-Premium-Brastemp/dp/B0G66Z7P9R"
+    variant_note: "Amazon não expõe voltagem estruturada - aplicar regra 'exigir 220V explícito' na validação"
