@@ -14,13 +14,15 @@
 stores:
   - id: mercado_livre
     name: "Mercado Livre"
-    method: api_oficial
-    status: pending_auth
+    method: bloqueado
+    status: blocked
     notes: >
-      API de busca retornou 403 sem autenticação. Aguardando registro de
-      aplicação em developers.mercadolivre.com.br para testar com token
-      OAuth. Se persistir bloqueado mesmo autenticado, é bloqueio por IP
-      de datacenter, não falta de auth - reavaliar nesse caso.
+      Testado com autenticação OAuth completa (client_credentials, token
+      válido obtido com sucesso) e o endpoint de busca continuou
+      retornando 403 forbidden. Confirma que é bloqueio por IP de
+      datacenter (GitHub Actions), não falta de credencial. Não vamos
+      tentar contornar (proxy/IP residencial) - fica de fora do
+      monitoramento por ora.
 
   - id: amazon_br
     name: "Amazon Brasil"
