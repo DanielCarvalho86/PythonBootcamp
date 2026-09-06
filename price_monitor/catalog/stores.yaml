@@ -1,0 +1,95 @@
+# Lojas monitoradas e o método de coleta viável para cada uma, baseado
+# na auditoria de acesso rodada em 2026-09-06 (ver
+# price_monitor/collectors/audit_store_access.py).
+#
+# status:
+#   active   -> acessível via requisição HTTP simples, entra no monitoramento
+#   blocked  -> proteção anti-bot (Akamai/Cloudflare/captcha) impede acesso
+#               simples; NÃO tentamos contornar (contra os termos de uso).
+#               Fica de fora até surgir uma forma legítima de acesso
+#               (API oficial, parceria de afiliados, etc).
+#   pending_auth -> precisa de credencial (API oficial) para confirmar
+#               viabilidade.
+
+stores:
+  - id: mercado_livre
+    name: "Mercado Livre"
+    method: api_oficial
+    status: pending_auth
+    notes: >
+      API de busca retornou 403 sem autenticação. Aguardando registro de
+      aplicação em developers.mercadolivre.com.br para testar com token
+      OAuth. Se persistir bloqueado mesmo autenticado, é bloqueio por IP
+      de datacenter, não falta de auth - reavaliar nesse caso.
+
+  - id: amazon_br
+    name: "Amazon Brasil"
+    method: scraping_pagina_publica
+    status: active
+    reliability_score: 70
+    notes: >
+      Página de produto acessível (200, HTML completo). Risco de bloqueio
+      aumenta com volume/frequência de requisições - manter frequência
+      conservadora e monitorar sinais de bloqueio a cada execução.
+
+  - id: magazine_luiza
+    name: "Magazine Luiza"
+    method: bloqueado
+    status: blocked
+    notes: "403 com proteção Akamai, inclusive no robots.txt."
+
+  - id: kabum
+    name: "KaBuM!"
+    method: scraping_pagina_publica
+    status: active
+    reliability_score: 85
+
+  - id: casas_bahia
+    name: "Casas Bahia"
+    method: bloqueado
+    status: blocked
+    notes: "403 com proteção Akamai."
+
+  - id: ponto
+    name: "Ponto"
+    method: bloqueado
+    status: blocked
+    notes: "403 com proteção Akamai (mesmo grupo da Casas Bahia)."
+
+  - id: fast_shop
+    name: "Fast Shop"
+    method: scraping_pagina_publica
+    status: active
+    reliability_score: 80
+    notes: "200 OK; menção a 'akamai' no HTML parece ser script de CDN, não bloqueio - página carregou completa."
+
+  - id: carrefour
+    name: "Carrefour"
+    method: bloqueado
+    status: blocked
+    notes: "403, sem sinal de proteção identificado nos marcadores simples usados, mas bloqueado mesmo assim."
+
+  - id: leroy_merlin
+    name: "Leroy Merlin"
+    method: bloqueado
+    status: blocked
+    notes: "403 com captcha."
+
+  - id: electrolux_oficial
+    name: "Electrolux (loja oficial)"
+    method: scraping_pagina_publica
+    status: active
+    reliability_score: 95
+    notes: "200 OK, página completa; menção a 'captcha' provavelmente é widget reCAPTCHA de formulário, não bloqueio de acesso."
+
+  - id: midea_oficial
+    name: "Midea (loja oficial)"
+    method: scraping_pagina_publica
+    status: active
+    reliability_score: 95
+
+  - id: brastemp_oficial
+    name: "Brastemp (loja oficial)"
+    method: scraping_pagina_publica
+    status: active
+    reliability_score: 95
