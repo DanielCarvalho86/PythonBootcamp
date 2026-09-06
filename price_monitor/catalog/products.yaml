@@ -1,0 +1,189 @@
+# Catálogo canônico dos produtos monitorados.
+#
+# - "aliases": termos/variações de título que as lojas costumam usar para
+#   anunciar este mesmo produto. Usados para dar match no matching de busca.
+# - "excluded_models": códigos/termos de produtos PARECIDOS mas DIFERENTES,
+#   que não podem ser confundidos com este item. Um coletor nunca deve
+#   registrar um preço para um anúncio que bata com um destes.
+# - "identity_confidence": confiança da identificação feita na pesquisa
+#   inicial (alta / media / baixa). Itens com confiança baixa/media pedem
+#   checagem redobrada de EAN/SKU antes de confiar num alerta.
+# - "target_price": preço-alvo definido pelo usuário. null = não definido
+#   ainda; quando definido, atingir esse preço ou menos gera alerta
+#   imediato independente do Offer Score.
+
+products:
+  - id: geladeira_electrolux_it70
+    canonical_name: "Geladeira Electrolux Frost Free Inverter 480L Duplex (linha IT70)"
+    brand: Electrolux
+    category: geladeira
+    capacity_liters: 480
+    voltage: "SmartBivolt (127V/220V automático)"
+    variants:
+      - sku: IT70
+        color: Branca
+      - sku: IT70S
+        color: "Inox Look / Platinum"
+      - sku: IT70B
+        color: "Black Inox Look"
+    identity_confidence: alta
+    aliases:
+      - "Geladeira Electrolux Frost Free Inverter 480L IT70"
+      - "Geladeira Electrolux Frost Free Inverter 481L Efficient com AutoSense SmartBivolt Duplex"
+      - "Refrigerador de 02 Portas Electrolux Frost Free 480 Litros Efficient AutoSense Inverter"
+    excluded_models:
+      - code: TF71
+        reason: "Mesma capacidade/visual, mas SEM compressor Inverter (Fix Speed) - não é o produto pedido"
+      - code: TF71S
+        reason: "Variante inox do TF71, sem Inverter"
+      - code: TF71B
+        reason: "Variante black inox do TF71, sem Inverter"
+      - code: IM7
+        reason: "Geladeira French Door 3 portas (produto diferente, não escolhido pelo usuário)"
+      - code: IM7S
+        reason: "Geladeira French Door 3 portas (produto diferente, não escolhido pelo usuário)"
+      - code: IM7B
+        reason: "Geladeira French Door 3 portas (produto diferente, não escolhido pelo usuário)"
+      - code: IB7S
+        reason: "Capacidade diferente (~490L), outra geração/variante"
+    target_price: null
+
+  - id: forno_electrolux_oe8el
+    canonical_name: "Forno de Embutir Elétrico Electrolux 80L Efficient com PerfectCook (OE8EL)"
+    brand: Electrolux
+    category: forno_embutir
+    capacity_liters: 80
+    voltage: "220V"
+    color: Inox
+    sku: OE8EL
+    ean_candidates:
+      - value: "7909569449349"
+        confidence: baixa
+        note: "Encontrado em apenas uma fonte agregada, não confirmado visualmente"
+    identity_confidence: alta
+    aliases:
+      - "Forno de Embutir Elétrico Electrolux 80L Efficient com PerfectCook (OE8EL)"
+      - "Forno de Embutir Electrolux Elétrico 80L Efficient com PerfectCook OE8EL"
+      - "Forno Elétrico Electrolux 80 Litros OE8EL 220V"
+    excluded_models:
+      - code: OE8EH
+        reason: "Mesma linha/capacidade mas cor PRETA e recurso PerfectCook360 (não PerfectCook) - anúncios muito parecidos no título"
+      - code: OE8GL
+        reason: "Versão a GÁS da mesma linha (não elétrico)"
+      - code: OE8GH
+        reason: "Versão a gás com PerfectCook360, preta"
+      - code: OC8EM
+        reason: "Outra linha 80L elétrica da Electrolux, produto diferente (não é a versão 127V do OE8EL)"
+    target_price: null
+
+  - id: lava_seca_midea_13kg_healthguard
+    canonical_name: "Lava e Seca Midea 13kg HealthGuard Titanium (MF200D130WB/GK-01, 110V/127V)"
+    brand: Midea
+    category: lava_e_seca
+    capacity_kg: 13
+    voltage: "127V (110V comercial)"
+    color: Titanium
+    sku: "MF200D130WB/GK-01"
+    identity_confidence: media
+    notes: >
+      Código inferido por pesquisa (usuário não informou o modelo).
+      Padrão de sufixo observado: -01 = 127V/110V, -02 = 220V.
+      Capacidade de secagem diverge entre fontes (7kg vs 8kg) - confirmar
+      na ficha técnica oficial antes de depender desse dado.
+    aliases:
+      - "Lava e Seca Midea 13kg HealthGuard Titanium Conectada"
+      - "Lava e Seca HealthGuard Smart 13kg Titanium Midea"
+      - "MF200D130WBGK01"
+      - "MF200D130WB-GK-01"
+    excluded_models:
+      - code: "MF200D130WB/GK-02"
+        reason: "Mesmo produto mas variante 220V (usuário quer 110V/127V)"
+      - code: "Máquina de Lavar 13kg Midea HealthGuard Titanium"
+        reason: "Mesmo nome de linha/cor/capacidade, mas é lavadora SEM função de secar - produto diferente"
+      - code: "Lava e Seca 13kg Titanium Slim Storm Wash"
+        reason: "Mesma capacidade/cor mas linha 'Storm Wash' (não HealthGuard) - produto diferente"
+    target_price: null
+
+  - id: lava_loucas_electrolux_lp10e
+    canonical_name: "Lava-Louças Electrolux 10 Serviços Preta com Lava e Seca 50min (LP10E)"
+    brand: Electrolux
+    category: lava_loucas
+    capacity_servicos: 10
+    voltage: "127V"
+    color: Preta
+    sku: LP10E
+    ean_candidates:
+      - value: "7909569520260"
+        variant: "127V"
+        confidence: media
+      - value: "7909569520277"
+        variant: "220V"
+        confidence: media
+    identity_confidence: alta
+    aliases:
+      - "Lava-Louças Electrolux Preta 10 Serviços com Programa Lava e Seca 50' - LP10E"
+      - "Lava-Louça Electrolux LP10E 10 Serviços Eco Higienizar Preta"
+      - "Lava-Louças Electrolux 10 Serviços com Programa Lava&Seca LP10E Preto"
+    excluded_models:
+      - code: LS10E
+        reason: "Mesmo programa 'Lava e Seca 50', mas cor INOX (não preta) - risco alto de confusão"
+      - code: LI10X
+        reason: "10 serviços, cor inox, sem o programa Lava e Seca 50"
+      - code: LL10X
+        reason: "10 serviços, cor inox, com função Higienizar mas produto diferente"
+    target_price: null
+
+  - id: geladeira_brastemp_bro85mk
+    canonical_name: "Geladeira Brastemp French Door 3 Portas Inox 559L 220V (BRO85MK)"
+    brand: Brastemp
+    category: geladeira
+    capacity_liters: 559
+    voltage: "220V"
+    color: Inox
+    sku: BRO85MK
+    identity_confidence: media
+    notes: >
+      Ambiguidade real encontrada na pesquisa: o código BRO85MK aparece
+      anunciado tanto em 127V quanto 220V (voltagem não é fixa no código),
+      e há pelo menos um anúncio com o mesmo código mostrando 554L (número
+      que na verdade pertence ao modelo BRO85AK). Usuário confirmou usar
+      BRO85MK tratando a voltagem como atributo separado do anúncio.
+    matching_rules:
+      - "Exigir '220V' explícito no título/descrição do anúncio - nunca assumir pela mera presença do código BRO85MK"
+      - "Ignorar/sinalizar anúncios que mostrem 554L para este código (provável erro de catalogação do lojista, é capacidade do BRO85AK)"
+    aliases:
+      - "Geladeira French Door 3 Portas Inox Design e Tecnologia Premium Brastemp - BRO85MK"
+      - "Geladeira Brastemp BRO85MK 559L Frost Free French Door Portas Inox"
+      - "Refrigerador French Door Brastemp de 03 Portas Frost Free com 559 Litros Inox - BRO85MK"
+    excluded_models:
+      - code: BRO85AK
+        reason: "554L (não 559L), classe A+++ - geração/linha diferente, mesmo sendo French Door 3 portas inox"
+      - code: BRO85ME
+        reason: "Mesma plataforma 559L mas cor 'Black Inox' (preta) - não é a cor pedida"
+      - code: BRO85NK
+        reason: "Edição limitada com puxador inox diferenciado - risco de confusão por também ser inox e 559L"
+    target_price: null
+
+  - id: lava_seca_midea_11kg_healthguard_slim
+    canonical_name: "Lava e Seca Midea 11kg HealthGuard Slim Titanium (MF201D110WB/GK-02, 220V)"
+    brand: Midea
+    category: lava_e_seca
+    capacity_kg: 11
+    voltage: "220V"
+    color: Titanium
+    sku: "MF201D110WB/GK-02"
+    identity_confidence: alta
+    notes: >
+      Confirmado por múltiplas lojas independentes. Padrão de sufixo
+      consistente com o Produto 3: -01 = 127V, -02 = 220V.
+    aliases:
+      - "Lava e Seca 11kg Titanium Slim HealthGuard Conectada Midea"
+      - "Lava e Seca Midea MF201D110WB-GK-02 HealthGuard Smart 11kg Titanium 220V"
+      - "MF201D110WBGK-02"
+      - "MF201D110WB GK 02"
+    excluded_models:
+      - code: "MF201D110WB/GK-01"
+        reason: "Mesmo produto mas variante 127V (usuário quer 220V)"
+      - code: "MF200D110WB/GK-02"
+        reason: "Prefixo MF200 (não MF201) e cor CINZA (não Titanium) - produto diferente, nome muito parecido"
+    target_price: null

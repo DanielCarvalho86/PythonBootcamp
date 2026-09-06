@@ -14,7 +14,7 @@ jobs:
           python-version: "3.11"
 
       - name: Instalar dependências
-        run: pip install requests
+        run: pip install -r requirements.txt
 
       - name: Auditar acesso às lojas
         run: python -m price_monitor.collectors.audit_store_access
