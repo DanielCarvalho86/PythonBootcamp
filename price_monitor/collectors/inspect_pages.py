@@ -1,7 +1,9 @@
 """Diagnóstico único: para cada URL de amostra, verifica se existe dado
-estruturado JSON-LD (schema.org Product/Offer) e, se não houver, procura
-trechos de HTML com padrão de preço em R$ para orientar a escrita dos
-parsers específicos por loja.
+estruturado JSON-LD (schema.org Product/Offer) e imprime só os campos
+relevantes (nome, sku, gtin, offers) para não estourar o log com a
+descrição. Para lojas sem JSON-LD, mostra o contexto de HTML ao redor
+de cada ocorrência de preço em R$, para localizar o seletor certo.
+Também tenta localizar um produto real na busca da KaBuM!.
 """
 import json
 import re
@@ -18,7 +20,6 @@ HEADERS = {
 
 SAMPLE_URLS = {
     "amazon_br": "https://www.amazon.com.br/Geladeira-French-Tecnologia-Premium-Brastemp/dp/B0G66Z7P9R",
-    "kabum": "https://www.kabum.com.br/",  # sem URL de produto real ainda, só a home
     "fast_shop": "https://site.fastshop.com.br/forno-eletrico-electrolux-80-litros-oe8el-220v-155810/p",
     "electrolux_oficial": "https://loja.electrolux.com.br/forno-de-embutir-eletrico-electrolux-80l-efficient-com-perfectcook--oe8el-/p",
     "midea_oficial": "https://www.midea.com.br/lava-e-seca-11kg-titanium-slim-healthguard-conectada-midea/p",
@@ -31,9 +32,10 @@ JSONLD_RE = re.compile(
 )
 PRICE_RE = re.compile(r'R\$\s?[\d.,]+')
 
+RELEVANT_KEYS = ("name", "sku", "gtin", "mpn", "brand", "offers")
+
 
 def find_offer(node):
-    """Procura recursivamente um objeto com @type Product ou 'offers'."""
     if isinstance(node, dict):
         if node.get("@type") in ("Product",) or "offers" in node:
             return node
@@ -49,7 +51,7 @@ def find_offer(node):
     return None
 
 
-def inspect(store_id: str, url: str) -> None:
+def inspect_jsonld(store_id: str, url: str) -> None:
     print(f"\n{'=' * 70}\n{store_id} | {url}\n{'=' * 70}")
     try:
         resp = requests.get(url, headers=HEADERS, timeout=25)
@@ -59,7 +61,6 @@ def inspect(store_id: str, url: str) -> None:
 
     print(f"status: {resp.status_code} | tamanho: {len(resp.content)} bytes")
     if resp.status_code != 200:
-        print("Não vou analisar mais - status diferente de 200.")
         return
 
     html = resp.text
@@ -75,20 +76,38 @@ def inspect(store_id: str, url: str) -> None:
         offer = find_offer(data)
         if offer:
             product_found = True
-            print("--- JSON-LD com Product/offers encontrado ---")
-            print(json.dumps(offer, ensure_ascii=False, indent=2)[:2000])
+            trimmed = {k: offer[k] for k in RELEVANT_KEYS if k in offer}
+            print("--- campos relevantes do JSON-LD ---")
+            print(json.dumps(trimmed, ensure_ascii=False, indent=2))
             break
 
     if not product_found:
-        print("Nenhum JSON-LD de produto claro encontrado. Amostra de trechos com 'R$':")
-        matches = PRICE_RE.findall(html)
-        print(f"ocorrências de padrão R$: {len(matches)}")
-        print(f"primeiras 15: {matches[:15]}")
+        print("Nenhum JSON-LD de produto claro. Contexto ao redor de cada 'R$':")
+        for m in PRICE_RE.finditer(html):
+            start = max(0, m.start() - 120)
+            end = min(len(html), m.end() + 40)
+            snippet = html[start:end].replace("\n", " ")
+            print(f"  ...{snippet}...")
+
+
+def inspect_kabum_search() -> None:
+    print(f"\n{'=' * 70}\nkabum | busca por produtos-alvo\n{'=' * 70}")
+    queries = ["forno eletrolux oe8el", "geladeira brastemp bro85mk", "lava e seca midea 11kg"]
+    for q in queries:
+        url = f"https://www.kabum.com.br/busca/{q.replace(' ', '-')}"
+        try:
+            resp = requests.get(url, headers=HEADERS, timeout=25)
+            has_product_words = "produto" in resp.text.lower() or "resultado" in resp.text.lower()
+            print(f"'{q}' -> {url} -> status {resp.status_code}, tamanho {len(resp.content)} bytes, "
+                  f"menção a produto/resultado: {has_product_words}")
+        except requests.RequestException as exc:
+            print(f"'{q}' -> ERRO: {exc}")
 
 
 def main() -> None:
     for store_id, url in SAMPLE_URLS.items():
-        inspect(store_id, url)
+        inspect_jsonld(store_id, url)
+    inspect_kabum_search()
 
 
 if __name__ == "__main__":
