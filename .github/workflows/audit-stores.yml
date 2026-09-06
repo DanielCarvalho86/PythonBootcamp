@@ -1,0 +1,20 @@
+name: Auditoria de acesso às lojas
+
+on:
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependências
+        run: pip install requests
+
+      - name: Auditar acesso às lojas
+        run: python -m price_monitor.collectors.audit_store_access
