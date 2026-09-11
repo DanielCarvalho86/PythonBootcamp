@@ -12,7 +12,12 @@
     "test:watch": "vitest",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "tsx prisma/seed.ts",
+    "db:validate:production": "prisma validate --schema=prisma/schema.production.prisma",
+    "db:generate:production": "prisma generate --schema=prisma/schema.production.prisma",
+    "db:seed:production": "prisma generate --schema=prisma/schema.production.prisma && tsx prisma/seed.ts",
+    "db:migrate:deploy:production": "prisma migrate deploy --schema=prisma/schema.production.prisma",
+    "build:production": "prisma generate --schema=prisma/schema.production.prisma && next build"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.124.0",

@@ -161,7 +161,11 @@ writes, the alert sync/dedup/cleanup cycle, and cross-user ownership checks
 prisma/schema.prisma        Data model (User, Profile, Food, NutritionPlan,
                              PlanMeal/PlanMealItem, MealEntry, PhysicalActivity,
                              DailyLog, WeightEntry, WaterEntry, SupplementEntry,
-                             AdjustmentLog, Alert)
+                             AdjustmentLog, Alert) — SQLite, dev + tests
+prisma/schema.production.prisma  Same data model, PostgreSQL — production only.
+                             See "Deploy de produção" below.
+prisma/migrations/           Postgres migration history for schema.production.prisma
+                             (schema.prisma/dev never uses migrations — db push only)
 prisma/seed.ts               Daniel's profile + biometrics + food DB + "Semana 3" plan
 src/lib/nutrition/           Deterministic nutrition math (grams -> macros/calories)
 src/lib/activities/          Activity totals, TDEE, energy balance, double-counting guard
@@ -182,6 +186,181 @@ src/components/dashboard/quickadd/  The nine Quick Add forms
 tests/unit/                  Pure engine/validation/analysis tests (no DB)
 tests/integration/           Full pipeline tests against a scratch SQLite DB
 ```
+
+## Deploy de produção
+
+Production runs on **Vercel** (Next.js host) + **Supabase Postgres** (persistent
+database) + **PostgreSQL migrations via Prisma Migrate**. Local dev and the
+test suite keep using SQLite exactly as described above — nothing in this
+section changes that.
+
+### Two schemas, one data model
+
+`prisma/schema.prisma` (SQLite, dev/test) and `prisma/schema.production.prisma`
+(PostgreSQL, production) declare the **exact same models, fields, relations,
+indexes, unique constraints, cascade rules and defaults** — every line is
+identical except each file's `datasource` block. This is deliberate: rather
+than hand-maintaining a "Postgres translation" that could silently drift from
+what the app actually reads/writes, the production schema is a mirror,
+diffed byte-for-byte against the dev schema whenever it changes.
+
+**Keeping the two schemas in sync** — whenever you add/change a model in
+`prisma/schema.prisma`:
+
+1. Apply the identical change to `prisma/schema.production.prisma` (every
+   model line, `@@index`, `@@unique`, `onDelete` — everything below the
+   `datasource` block must stay textually identical between the two files).
+2. Verify: `diff <(tail -n +21 prisma/schema.prisma) <(tail -n +33 prisma/schema.production.prisma)`
+   must print nothing. (Line 21/33 are where `model User {` starts in each
+   file today — adjust if the header comments grow.)
+3. Generate a new migration for the change (needs a reachable Postgres — the
+   Supabase project itself, once it exists):
+   `npx prisma migrate dev --schema=prisma/schema.production.prisma --create-only --name <change>`,
+   review the generated SQL, then apply it with
+   `npm run db:migrate:deploy:production` (see below).
+4. Never hand-edit a file under `prisma/migrations/` after it has been
+   applied anywhere — add a new migration instead.
+
+`npm run db:validate:production` checks the production schema's syntax
+offline (no DB connection needed) — run it after any edit.
+
+### ⚠️ Do not run production Prisma commands from your local dev sandbox
+
+`db:generate:production` writes into the same default `@prisma/client`
+output as the SQLite schema. Only run `db:*:production` scripts from
+Vercel's isolated build environment (see "Vercel configuration" below). If
+you ever run one locally by accident, restore your dev client with
+`npm run db:generate`.
+
+### 1. Create the Supabase project (one-time, manual)
+
+1. Go to **supabase.com** → sign in → **New project**.
+2. Pick an organization, name it (e.g. `daniel-cutting-tracker`), choose a
+   region close to you, and **set a strong database password** — save it in
+   a password manager, you'll need it once to build the connection strings
+   below. **Do not share this password in chat, in Git, or in any report.**
+3. Wait for provisioning, then open **Project Settings → Database**.
+4. Under **Connection string**, copy two values:
+   - **Connection pooling** (Transaction mode, port `6543`) → this is your
+     `DATABASE_URL`. It looks like
+     `postgresql://postgres.xxxx:[PASSWORD]@aws-0-xxxx.pooler.supabase.com:6543/postgres?pgbouncer=true`.
+   - **Direct connection** (port `5432`) → this is your `DIRECT_URL`. Same
+     host style, port `5432`, no `pgbouncer` parameter.
+5. Replace `[PASSWORD]` in both strings with the database password from step 2.
+
+**Do not share these two connection strings with me in chat or anywhere
+they'd be logged.** Paste them straight into Vercel's environment variable
+UI (step 3 below) or into your own local `.env.production.local` (already
+covered by `.gitignore`'s `.env*` rule) if you want to run a migration from
+your own machine instead of asking me to.
+
+### 2. Vercel project configuration (one-time, manual)
+
+Since you already have Vercel connected to GitHub:
+
+1. Open the Vercel dashboard → **Add New → Project** → import
+   `DanielCarvalho86/PythonBootcamp`.
+2. **Root Directory**: set to `daniel-cutting-tracker` (the repo root has
+   unrelated bootcamp exercises alongside this app — Vercel must build from
+   the subdirectory, not the repo root).
+3. **Framework Preset**: Next.js (should auto-detect once Root Directory is set).
+4. **Build Command**: override to
+   `npm run build:production`
+   (this runs `prisma generate` → `next build` against the production
+   schema — see `package.json`). **Deliberately does not run any
+   migration** — see "Applying migrations" below for why, and how.
+5. **Install Command**: leave as `npm install` (default).
+6. **Node.js Version**: 20.x or later (Project Settings → General).
+7. **Production Branch**: `claude/daniel-cutting-tracker-7h53zp` (or `main`,
+   once/if you merge this branch there — your call, not something to change
+   without telling me first).
+
+### 3. Environment variables (Vercel dashboard → Project Settings → Environment Variables)
+
+Set these for the **Production** environment (names match exactly what the
+code reads — nothing invented):
+
+| Variable | Value | Notes |
+|---|---|---|
+| `DATABASE_URL` | Supabase pooled connection string (port 6543) | from step 1 |
+| `DIRECT_URL` | Supabase direct connection string (port 5432) | from step 1, used only by `prisma migrate deploy` (never by the build or the running app) |
+| `AUTH_SESSION_SECRET` | a new random secret, e.g. `openssl rand -hex 32` | **do not reuse the dev value** |
+| `AUTH_USER_EMAIL` | Daniel's real login email | |
+| `ANTHROPIC_API_KEY` | your Claude API key | optional — omit to run on the rule-based parser only, exactly like dev without a key |
+
+Nothing else is read from the environment by this app. Do not add
+`AUTH_PASSWORD_HASH` — it appears in `.env.example` for historical reasons
+but no code reads it; the real check is against the `User.passwordHash`
+column (see `src/lib/auth.ts`).
+
+### 4. Applying migrations (deliberately separate from the build)
+
+`npm run build:production` only generates the Prisma Client and builds
+Next.js — it **never** runs `prisma migrate deploy`. This is intentional:
+Vercel runs the same Build Command for every deployment, including Preview
+deployments for branches/PRs. If migrations ran inside the build, an
+accidental Preview environment variable pointed at the production
+`DATABASE_URL`/`DIRECT_URL` (or a future misconfiguration) could apply a
+migration against production without anyone deciding to. Keeping migration
+out of the build removes that path entirely — there is no automatic way
+for any deploy, Preview or Production, to reach the database schema.
+
+As a second layer, only ever set `DATABASE_URL`/`DIRECT_URL` in Vercel for
+the **Production** environment scope (Project Settings → Environment
+Variables → scope each variable to "Production" only, not "Preview" or
+"Development") — Preview builds then have no database credentials to
+connect with at all, even if something in the build process tried to.
+
+Migrations are applied with a separate, explicit command:
+`npm run db:migrate:deploy:production` — run this yourself (locally, with
+production env vars loaded, or via Vercel's dashboard/CLI as a one-off
+command against the Production environment) **before or after** a deploy,
+never automatically as part of one. The first run applies the baseline
+migration (`prisma/migrations/*_init/`) and creates every table — the
+Supabase project starts empty, so this is a plain `CREATE TABLE` migration,
+never a reset of anything. Subsequent runs are no-ops unless a new
+migration file exists.
+
+To create Daniel's actual production user (do **not** reuse the dev
+password `cutting2026`):
+
+- **Option A — from your own machine** (recommended, keeps the password
+  off this chat entirely): pull the production env vars locally
+  (`vercel env pull .env.production.local`), then run
+  `SEED_USER_PASSWORD='<a-strong-password-you-choose>' AUTH_USER_EMAIL='<real-email>' DATABASE_URL='<pooled-url>' DIRECT_URL='<direct-url>' npm run db:seed:production`
+  — this regenerates the Prisma client against the production schema and
+  seeds the user, profile, food catalog and the active plan the same way
+  `npm run db:seed` does locally. It's idempotent (safe to re-run: it
+  upserts the user/profile/foods and only creates the plan if none exists
+  yet, so it never duplicates or overwrites your real data on a second
+  run). Afterwards, run `npm run db:generate` to restore your local dev
+  client (see the warning above).
+- **Option B — ask me to run it**: paste `SEED_USER_PASSWORD` (a password
+  you choose, not the dev one) and confirm the production `DATABASE_URL`
+  is already set in Vercel; I'll run the seed script against it using the
+  same env vars, without ever printing the password back.
+
+Either way, once seeded, log in with the production URL, your real email,
+and the password you chose — never the dev default.
+
+### 5. Verifying persistence (do this before calling the deploy done)
+
+Log in on the production URL → log a test weight entry, a test meal, and
+some water → log out → log back in → confirm all three are still there.
+Prisma Migrate against a real Postgres database is durable by construction
+(it's not SQLite-on-serverless-filesystem, which would NOT persist between
+function invocations), but this check is still the actual proof, not an
+assumption.
+
+### Never do this against production
+
+- `prisma migrate reset` (drops and recreates everything)
+- `prisma db push` (can silently drop columns/tables to force-match the
+  schema — migrations are the only production-safe path)
+- Copying `prisma/dev.db` to the server, or pointing production at a
+  file-based SQLite URL — Vercel's filesystem is ephemeral per invocation,
+  so any writes would vanish and concurrent requests could see different
+  data entirely.
 
 ## Known limitations
 
