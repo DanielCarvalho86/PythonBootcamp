@@ -51,6 +51,51 @@ never be dropped or zeroed — `validateShakeComposition()` is both a
 unit-tested business rule and a defense-in-depth check the engine runs on
 its own output every time it adjusts a protected-composition meal.
 
+## Quick Add
+
+The dashboard's message box ("O que voce comeu ou fez hoje?") stays the
+primary way to log anything — Quick Add is a second, structured entry point
+into the exact same pipeline (`src/app/(app)/quick-add-actions.ts` calls the
+same `recalculateDay`/nutrition engines `processUserMessage` does), for when
+typing a sentence isn't the fastest option. Nine chips open small inline
+forms: **Peso** (weight/time/condition/notes), **Refeicao** (pick a food from
+the active catalog, quantity + unit, add several at once), **Passos**,
+**Musculacao**, **Natacao**, **Outra atividade**, **Agua**, **Suplemento**
+(whey/creatine, target grams pulled from the active plan — never hardcoded),
+and **Check-in** (fome/energia/desempenho, 1-5 — opt-in data the alert engine
+uses; skipping it just means those specific alerts never fire).
+
+## Minha evolucao (`/progress`)
+
+Period-filterable (7/14/30/60/90 days) rollup: initial vs current weight,
+total change, 7-day rolling average, and a trend verdict (↓/→/↑) that's
+never read off a single weigh-in — `calculateWeightTrend()`
+(`src/lib/analysis/trend.ts`) compares this week's rolling average against
+last week's and explicitly returns "Dados insuficientes para calcular
+tendencia" rather than guessing when there isn't enough history. Below that:
+average calories/macros vs the active plan's targets, activity averages
+(steps, sessions by type), estimated energy-balance averages (always labeled
+"estimado"), and the same weight/calories/macros/activity/deficit charts as
+`/history`, scoped to the selected period.
+
+## Alerts (`/alerts`)
+
+Deterministic, non-diagnostic cautions computed by
+`detectAlerts()` (`src/lib/analysis/alerts.ts`) from several days of data —
+never a single bad day or one weigh-in. Types: `LOW_PROTEIN`,
+`LOW_HYDRATION`, `LOW_INTAKE`, `HIGH_DEFICIT`, `RAPID_WEIGHT_LOSS`,
+`LOW_ENERGY`, `HIGH_HUNGER`, `PERFORMANCE_DROP`, `HIGH_ACTIVITY`, each with a
+severity (`INFO`/`NOTICE`/`WARNING` — no `CRITICAL`, this isn't a diagnostic
+tool). None of them trigger an automatic change to the diet, activity, or
+plan — several messages explicitly say so ("nao vamos recomendar jejum...",
+"isso nao aumenta automaticamente sua meta..."), and that's enforced
+structurally: the detection module has no write access to anything. At most
+one row per `(userId, type)` ever exists (`syncAlertsForToday()` in
+`src/lib/services/syncAlerts.ts`): a still-true condition gets its message
+refreshed in place without resetting `isRead`; one that stops being true is
+deleted, so the page only ever shows what's currently relevant. Synced on
+every dashboard and `/alerts` load.
+
 ## Getting started
 
 ```bash
@@ -96,12 +141,19 @@ directly) — never trusting client-side validation alone.
 npm test
 ```
 
-Runs unit tests for the nutrition/activity/adjustment engines, the
-shake composition rule, the rule-based parser, and the food/plan form
-validation, plus integration tests against a dedicated SQLite file
-(`prisma/test.db`, wiped between tests — never the dev database) covering
-the end-to-end logging pipeline, the shake slot fix, and the food/plan
-editors' CRUD paths.
+148 tests. Unit tests cover the nutrition/activity/adjustment engines, the
+shake composition rule, the rule-based parser, the food/plan form
+validation, and the analysis engine (rolling averages, weight trend,
+nutrition/activity/energy averages, alert detection — including that every
+alert requires several days of corroborating data, never fires from a
+single day, and that "denies doing X automatically" messages actually deny
+it). Integration tests run against a dedicated SQLite file (`prisma/test.db`,
+wiped between tests — never the dev database) and cover the end-to-end
+logging pipeline, the shake slot fix (a snack never consumes the shake
+slot; "tomei meu shake" resolves the plan's current composition), the
+food/plan editors' CRUD paths, Quick Add's meal/activity/steps/check-in
+writes, the alert sync/dedup/cleanup cycle, and cross-user ownership checks
+(plan items, alerts).
 
 ## Project structure
 
@@ -109,27 +161,33 @@ editors' CRUD paths.
 prisma/schema.prisma        Data model (User, Profile, Food, NutritionPlan,
                              PlanMeal/PlanMealItem, MealEntry, PhysicalActivity,
                              DailyLog, WeightEntry, WaterEntry, SupplementEntry,
-                             AdjustmentLog)
+                             AdjustmentLog, Alert)
 prisma/seed.ts               Daniel's profile + biometrics + food DB + "Semana 3" plan
 src/lib/nutrition/           Deterministic nutrition math (grams -> macros/calories)
 src/lib/activities/          Activity totals, TDEE, energy balance, double-counting guard
 src/lib/adjustment/          Least-change engine + shake permanent-rule validation
+src/lib/analysis/            Rolling averages, weight trend, nutrition/activity/energy
+                              averages, alert detection (all pure, DB-free functions)
 src/lib/ai/                  Natural language -> structured JSON (Claude + rule-based)
-src/lib/services/            Orchestration: process a message, recalculate a day, read models
+src/lib/services/            Orchestration: process a message, recalculate a day,
+                              sync alerts, read models for dashboard/history/progress
 src/lib/validation/          Zod schemas for AI output, food forms, plan forms
 src/lib/auth.ts              Minimal single-user session auth
-src/app/(app)/                Authenticated app shell: dashboard, history, plan, settings
+src/app/(app)/                Authenticated app shell: dashboard, history, progress,
+                              alerts, plan, settings
+src/app/(app)/quick-add-actions.ts  Structured entry points into the same engines
 src/app/(app)/settings/foods  Food editor (list/search/create/edit/deactivate)
 src/app/(app)/settings/plans  Plan editor (targets, meals, items, activate, duplicate)
-tests/unit/                  Pure engine/validation tests (no DB)
+src/components/dashboard/quickadd/  The nine Quick Add forms
+tests/unit/                  Pure engine/validation/analysis tests (no DB)
 tests/integration/           Full pipeline tests against a scratch SQLite DB
 ```
 
 ## Known limitations
 
-- Single user (Daniel), though the schema (per-row `userId`, plan ownership
-  checks in the settings actions) is multi-user-ready — there's just no
-  sign-up/multi-account UI yet.
+- Single user (Daniel), though the schema (per-row `userId`, ownership
+  checks in the settings/alerts actions) is multi-user-ready — there's just
+  no sign-up/multi-account UI yet.
 - No in-app password-change flow; rotate `SEED_USER_PASSWORD` and re-seed,
   or edit the `User` row's `passwordHash` directly.
 - The rule-based parser covers the message patterns in the product spec
@@ -139,3 +197,9 @@ tests/integration/           Full pipeline tests against a scratch SQLite DB
   of a guess.
 - The plan editor lets you add/edit/remove meals and items, but there's no
   drag-to-reorder — set the `order` field directly when adding a meal.
+- Alert thresholds (e.g. what counts as "elevated" deficit, "rapid" weight
+  loss) are heuristic constants documented inline in
+  `src/lib/analysis/alerts.ts`, not personalized or clinically derived —
+  by design, since this app never diagnoses or prescribes.
+- Quick Add's "Suplemento" form only covers whey/creatine (the two the plan
+  tracks targets for); a free-form third supplement isn't wired up.

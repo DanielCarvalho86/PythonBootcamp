@@ -150,13 +150,20 @@ export async function markActivityExcludedAction(activityId: string, includedInA
   revalidatePath("/history");
 }
 
-export async function addWeightEntryAction(dateStr: string, weightKg: number, measurementCondition?: string): Promise<void> {
+export async function addWeightEntryAction(
+  dateStr: string,
+  weightKg: number,
+  measurementCondition?: string,
+  time?: string,
+  notes?: string,
+): Promise<void> {
   const userId = await requireUserId();
   const date = toDateOnly(dateStr);
-  await prisma.weightEntry.create({ data: { userId, date, weightKg, measurementCondition } });
+  await prisma.weightEntry.create({ data: { userId, date, weightKg, measurementCondition, time, notes } });
   await recalculateDay(userId, date, { triggerAdjustment: false });
   revalidatePath("/");
   revalidatePath("/history");
+  revalidatePath("/progress");
 }
 
 export async function addWaterEntryAction(dateStr: string, amountMl: number): Promise<void> {
@@ -166,6 +173,7 @@ export async function addWaterEntryAction(dateStr: string, amountMl: number): Pr
   await recalculateDay(userId, date, { triggerAdjustment: false });
   revalidatePath("/");
   revalidatePath("/history");
+  revalidatePath("/progress");
 }
 
 export async function setSupplementTakenAction(dateStr: string, type: "whey" | "creatine", taken: boolean, targetGrams: number): Promise<void> {

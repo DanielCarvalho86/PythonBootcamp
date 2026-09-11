@@ -6,6 +6,8 @@ import { logoutAction } from "@/app/(app)/actions";
 const NAV_ITEMS = [
   { href: "/", label: "Hoje" },
   { href: "/history", label: "Historico" },
+  { href: "/progress", label: "Evolucao" },
+  { href: "/alerts", label: "Alertas" },
   { href: "/plan", label: "Plano" },
   { href: "/settings", label: "Config" },
 ];

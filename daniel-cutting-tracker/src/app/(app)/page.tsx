@@ -1,15 +1,19 @@
+import Link from "next/link";
 import { requireUserId } from "@/lib/auth";
 import { prisma } from "@/lib/database/prisma";
 import { getDashboardData } from "@/lib/services/getDashboard";
 import { todayDateOnlyString } from "@/lib/services/dateOnly";
 import { calculateEnergyBalance } from "@/lib/activities/engine";
 import { planToTargets } from "@/lib/services/dayPlan";
+import { syncAlertsForToday } from "@/lib/services/syncAlerts";
 import { MessageInbox } from "@/components/forms/MessageInbox";
 import { WeightCard } from "@/components/dashboard/WeightCard";
 import { NutritionCard } from "@/components/dashboard/NutritionCard";
 import { ActivityCard } from "@/components/dashboard/ActivityCard";
 import { EnergyBalanceCard } from "@/components/dashboard/EnergyBalanceCard";
 import { PlanCard, type ConsumedEntry } from "@/components/dashboard/PlanCard";
+import { AlertsSummaryCard } from "@/components/dashboard/AlertsSummaryCard";
+import { QuickAddBar } from "@/components/dashboard/quickadd/QuickAddBar";
 import { detectStepDoubleCounting } from "@/lib/activities/engine";
 import type { ActivityType, CaloriesSource } from "@/types/domain";
 
@@ -17,9 +21,11 @@ export default async function TodayPage() {
   const userId = await requireUserId();
   const today = todayDateOnlyString();
 
-  const [profile, dashboard] = await Promise.all([
+  const [profile, dashboard, activeFoods, alertCandidates] = await Promise.all([
     prisma.profile.findUnique({ where: { userId } }),
     getDashboardData(userId, today),
+    prisma.food.findMany({ where: { active: true }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    syncAlertsForToday(userId, today),
   ]);
 
   const consumed = {
@@ -70,6 +76,24 @@ export default async function TodayPage() {
     );
   }
 
+  const wheyEntry = dashboard.supplements.find((s) => s.type === "whey");
+  const creatineEntry = dashboard.supplements.find((s) => s.type === "creatine");
+  const supplementDefaults = {
+    wheyTargetG: dashboard.plan?.wheyTargetG ?? wheyEntry?.targetGrams ?? 40,
+    creatineTargetG: dashboard.plan?.creatineTargetG ?? creatineEntry?.targetGrams ?? 5,
+    wheyTaken: wheyEntry?.taken ?? false,
+    creatineTaken: creatineEntry?.taken ?? false,
+  };
+
+  const weightTrendArrow =
+    dashboard.currentWeight !== null && dashboard.sevenDayAvgWeight !== null
+      ? dashboard.currentWeight < dashboard.sevenDayAvgWeight - 0.1
+        ? "↓"
+        : dashboard.currentWeight > dashboard.sevenDayAvgWeight + 0.1
+          ? "↑"
+          : "→"
+      : null;
+
   return (
     <div className="flex flex-col gap-4">
       <div>
@@ -83,8 +107,6 @@ export default async function TodayPage() {
         )}
       </div>
 
-      <MessageInbox />
-
       {profile && (
         <WeightCard
           currentWeight={dashboard.currentWeight}
@@ -93,6 +115,16 @@ export default async function TodayPage() {
           sevenDayAvg={dashboard.sevenDayAvgWeight}
         />
       )}
+
+      <MessageInbox />
+
+      <QuickAddBar
+        dateStr={today}
+        foods={activeFoods}
+        supplementDefaults={supplementDefaults}
+        waterCurrentMl={dashboard.waterTotalMl}
+        waterTargetMl={dashboard.plan?.waterMinMl ?? 3000}
+      />
 
       <NutritionCard consumed={consumed} targets={targets} />
 
@@ -127,6 +159,18 @@ export default async function TodayPage() {
           </p>
         </div>
       )}
+
+      <AlertsSummaryCard alerts={alertCandidates.map((c, i) => ({ id: `${c.type}-${i}`, severity: c.severity, title: c.title, message: c.message }))} />
+
+      <Link
+        href="/progress"
+        className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4 text-sm text-zinc-700 hover:border-zinc-300"
+      >
+        <span>
+          Minha evolucao {weightTrendArrow && <span className="ml-1 text-base">{weightTrendArrow}</span>}
+        </span>
+        <span className="text-xs text-zinc-400">ver detalhes →</span>
+      </Link>
     </div>
   );
 }

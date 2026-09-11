@@ -34,6 +34,7 @@ model User {
   waterEntries       WaterEntry[]
   supplementEntries  SupplementEntry[]
   adjustmentLogs     AdjustmentLog[]
+  alerts             Alert[]
 }
 
 // Editable profile / biometric reference data. Never treated as ground
@@ -359,5 +360,32 @@ model AdjustmentLog {
 
   createdAt DateTime @default(now())
 
+  @@index([userId, date])
+}
+
+// A detected, non-diagnostic caution (low protein, high estimated deficit,
+// rapid weight-loss trend, etc — see src/lib/analysis/alerts.ts). At most
+// one row per (userId, type): syncAlertsForToday() upserts the message/
+// severity/date when the condition is still true and deletes the row once
+// it stops being true, so /alerts only ever shows currently-relevant
+// items — "isRead" persists across a refresh instead of being lost.
+model Alert {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date     DateTime // last date this condition was detected
+  type     String // LOW_PROTEIN | LOW_HYDRATION | LOW_INTAKE | HIGH_DEFICIT | RAPID_WEIGHT_LOSS | LOW_ENERGY | HIGH_HUNGER | PERFORMANCE_DROP | HIGH_ACTIVITY
+  severity String // INFO | NOTICE | WARNING
+  title    String
+  message  String
+  dataJson String? // JSON blob with the numbers behind the alert, for display/debugging
+
+  isRead Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, type])
   @@index([userId, date])
 }
