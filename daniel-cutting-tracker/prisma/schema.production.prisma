@@ -1,0 +1,403 @@
+// Daniel Cutting Tracker — PRODUCTION Prisma schema (PostgreSQL / Supabase)
+//
+// This file is a deliberate mirror of prisma/schema.prisma (SQLite, used for
+// local dev + the automated test suite): every model, field, relation,
+// index, unique constraint, cascade rule and default below is byte-for-byte
+// identical to the dev schema — only this header comment and the
+// `datasource` block differ. See "Keeping the two schemas in sync" in
+// README.md for the required procedure whenever a model changes.
+//
+// Do NOT run `prisma generate --schema=prisma/schema.production.prisma`
+// (or any `db:*:production` npm script) in a local dev sandbox — it writes
+// into the same default @prisma/client output as the SQLite schema and
+// would leave local dev/tests pointed at a Postgres-flavored client. These
+// commands are meant to run only in Vercel's isolated production build
+// environment. If you do run one locally by mistake, restore dev with:
+//   npm run db:generate
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  // Pooled connection (e.g. Supabase's pgbouncer port 6543) — used for all
+  // normal application queries at runtime.
+  url       = env("DATABASE_URL")
+  // Direct, non-pooled connection (e.g. Supabase port 5432) — Prisma Migrate
+  // needs this for DDL (CREATE TABLE, etc.), which a pooled/transaction-mode
+  // connection can't reliably run. Only used by `prisma migrate *`, never by
+  // the running app.
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  profile            Profile?
+  nutritionPlans     NutritionPlan[]
+  mealEntries        MealEntry[]
+  physicalActivities PhysicalActivity[]
+  dailyLogs          DailyLog[]
+  weightEntries      WeightEntry[]
+  waterEntries       WaterEntry[]
+  supplementEntries  SupplementEntry[]
+  adjustmentLogs     AdjustmentLog[]
+  alerts             Alert[]
+}
+
+// Editable profile / biometric reference data. Never treated as ground
+// truth by calculations — see calculateEstimatedEnergyBalance().
+model Profile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name    String
+  sex     String // "male" | "female"
+  birthDate DateTime
+  heightCm  Float
+
+  referenceWeightKg Float
+  referenceWeightAt DateTime
+
+  // Bioimpedance reference snapshot — editable, treated as an estimate.
+  bodyFatPercent      Float?
+  fatMassKg           Float?
+  muscleMassKg        Float?
+  skeletalMuscleKg    Float?
+  visceralFat         Float?
+  bmi                 Float?
+  deviceBmrKcal       Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// One food item and its nutrition facts per 100g, plus a default serving.
+model Food {
+  id                String @id @default(cuid())
+  name              String
+  category          String
+  servingUnit       String // "g" | "unit" | "slice" | "tbsp" | "cup" | "ml"
+  gramsPerUnit      Float? // required when servingUnit != "g"/"ml"
+  caloriesPer100g   Float
+  proteinPer100g    Float
+  carbsPer100g      Float
+  fatPer100g        Float
+  fiberPer100g      Float
+  source            String @default("manual")
+  verified          Boolean @default(false)
+  // Soft-delete: foods with existing MealEntry/PlanMealItem rows are never
+  // hard-deleted (spec: history must keep showing them) — the food editor
+  // just flips this to false so it drops out of new-entry search results.
+  active            Boolean @default(true)
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  mealEntries   MealEntry[]
+  planMealItems PlanMealItem[]
+
+  @@index([name])
+}
+
+// A weekly (or arbitrary period) nutrition plan — "Week 1", "Week 2", ...
+model NutritionPlan {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name      String // e.g. "Semana 3"
+  startDate DateTime
+  endDate   DateTime
+  isActive  Boolean  @default(true)
+
+  caloriesMin    Float
+  caloriesTarget Float
+  caloriesMax    Float
+
+  proteinMin    Float
+  proteinTarget Float
+  proteinMax    Float
+
+  carbsMin    Float
+  carbsTarget Float
+  carbsMax    Float
+
+  fatMin    Float
+  fatTarget Float
+  fatMax    Float
+
+  fiberMin Float
+  fiberMax Float
+
+  waterMinMl Float
+  waterMaxMl Float
+
+  creatineTargetG Float @default(5)
+  wheyTargetG     Float @default(40)
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  meals PlanMeal[]
+
+  @@index([userId, startDate, endDate])
+}
+
+// A meal slot inside a plan (breakfast, lunch, shake, dinner, ...).
+model PlanMeal {
+  id     String        @id @default(cuid())
+  planId String
+  plan   NutritionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  // Unambiguous meal identifier. "shake" is its own slot — deliberately
+  // NOT reused for generic unclassified snacks (those default to "other")
+  // so a freeform "comi um lanche" message can never be mistaken for the
+  // shake having been consumed. See src/types/domain.ts MEAL_TYPES.
+  mealType String // breakfast | morning_snack | lunch | shake | afternoon_snack | dinner | supper | other
+  name     String
+  order    Int
+
+  // Permanent-rule flag: true for the Daniel shake meal, meaning the
+  // adjustment engine may resize items but must never remove the
+  // mandatory categories (fruit, milk, whey, oats, nuts, creatine).
+  isProtectedComposition Boolean @default(false)
+
+  // Explicit slot metadata the adjustment engine reads instead of
+  // inferring behavior from mealType alone.
+  isRequired   Boolean @default(true) // must be planned every day the plan is active
+  isConsumable Boolean @default(true) // can be logged as eaten (always true today; reserved for future non-food slots)
+  isAdjustable Boolean @default(true) // the least-change optimizer is allowed to resize this meal's items
+
+  items PlanMealItem[]
+
+  @@index([planId])
+}
+
+// One food target inside a plan meal, with adjustment bounds used by the
+// "least change" optimizer (see src/lib/adjustment).
+model PlanMealItem {
+  id         String   @id @default(cuid())
+  planMealId String
+  planMeal   PlanMeal @relation(fields: [planMealId], references: [id], onDelete: Cascade)
+  foodId     String
+  food       Food     @relation(fields: [foodId], references: [id])
+
+  targetQuantityG Float
+  minQuantityG    Float
+  maxQuantityG    Float
+  adjustmentStepG Float @default(10)
+
+  // Nutrient role drives which items the adjustment engine prefers to
+  // move first (protein sources vs. carb/fat sources).
+  role String // protein | carb | fat | fixed
+
+  // Mandatory items (e.g. whey/creatine in the shake) can be resized but
+  // never zeroed out by the optimizer.
+  isMandatory Boolean @default(false)
+
+  @@index([planMealId])
+}
+
+// A logged food item, exactly as consumed. Immutable once meals in the
+// past are never auto-modified (see src/lib/adjustment).
+model MealEntry {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date     DateTime // day this entry belongs to (local date, time zeroed)
+  mealType String
+
+  foodId String?
+  food   Food?   @relation(fields: [foodId], references: [id])
+
+  freeTextDescription String? // used when no matching Food row exists yet
+
+  quantity Float
+  unit     String
+  grams    Float
+
+  calories Float
+  protein  Float
+  carbs    Float
+  fat      Float
+  fiber    Float
+
+  source      String  @default("user") // user | ai_parser | plan
+  isEstimated Boolean @default(false)
+  notes       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, date])
+}
+
+model PhysicalActivity {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date         DateTime
+  activityType String // steps | weight_training | swimming | walking | running | cycling | cardio | sports | other
+
+  description      String?
+  durationMinutes  Float?
+  steps            Int?
+  caloriesBurned   Float
+  caloriesSource   String  @default("user") // user | device | estimated
+  intensity        String?
+  distanceKm       Float?
+
+  // Prevents double counting: e.g. if a walking session already embeds a
+  // step count that is separately logged as a "steps" activity.
+  includedInActivityTotal Boolean @default(true)
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, date])
+}
+
+// Daily snapshot/summary. Detailed data stays in MealEntry /
+// PhysicalActivity; this table is a denormalized cache for fast dashboard
+// reads and for fields that don't belong anywhere else (hunger, energy...).
+model DailyLog {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date DateTime
+
+  weightKg Float?
+
+  totalActivityCaloriesKcal Float @default(0)
+  estimatedBmrKcal          Float @default(0)
+  estimatedTdeeKcal         Float @default(0)
+
+  caloriesConsumedKcal Float @default(0)
+  proteinConsumedG     Float @default(0)
+  carbsConsumedG       Float @default(0)
+  fatConsumedG         Float @default(0)
+  fiberConsumedG       Float @default(0)
+
+  waterMl Float @default(0)
+
+  hunger              Int? // 1-5 subjective scale
+  energy              Int? // 1-5 subjective scale
+  trainingPerformance Int? // 1-5 subjective scale
+
+  dayStatus String @default("on_track") // on_track | above_target | below_target
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+model WeightEntry {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date                  DateTime
+  time                  String?
+  weightKg              Float
+  measurementCondition  String? // e.g. "fasted_on_waking"
+  notes                 String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+model WaterEntry {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date     DateTime
+  amountMl Float
+  notes    String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+model SupplementEntry {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date          DateTime
+  type          String // whey | creatine | other
+  targetGrams   Float
+  takenGrams    Float?
+  taken         Boolean @default(false)
+  notes         String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+  @@unique([userId, date, type])
+}
+
+// Audit trail every time the adjustment engine recalculates future meals.
+model AdjustmentLog {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date              DateTime
+  triggerMealEntryId String?
+  reason            String
+  originalPlanJson  String // JSON snapshot of affected PlanMealItem quantities before
+  adjustedPlanJson  String // JSON snapshot after
+  changesJson       String // JSON list of {food, before, after, unit}
+  warningsJson      String? // JSON list of warning strings
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+// A detected, non-diagnostic caution (low protein, high estimated deficit,
+// rapid weight-loss trend, etc — see src/lib/analysis/alerts.ts). At most
+// one row per (userId, type): syncAlertsForToday() upserts the message/
+// severity/date when the condition is still true and deletes the row once
+// it stops being true, so /alerts only ever shows currently-relevant
+// items — "isRead" persists across a refresh instead of being lost.
+model Alert {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date     DateTime // last date this condition was detected
+  type     String // LOW_PROTEIN | LOW_HYDRATION | LOW_INTAKE | HIGH_DEFICIT | RAPID_WEIGHT_LOSS | LOW_ENERGY | HIGH_HUNGER | PERFORMANCE_DROP | HIGH_ACTIVITY
+  severity String // INFO | NOTICE | WARNING
+  title    String
+  message  String
+  dataJson String? // JSON blob with the numbers behind the alert, for display/debugging
+
+  isRead Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, type])
+  @@index([userId, date])
+}
