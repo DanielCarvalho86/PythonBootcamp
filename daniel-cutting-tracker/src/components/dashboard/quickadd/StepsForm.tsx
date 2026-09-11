@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { addOrUpdateStepsAction } from "@/app/(app)/quick-add-actions";
-import { inputClass, labelClass, submitClass } from "@/components/dashboard/quickadd/shared";
+import { inputClass, labelClass, submitClass, errorClass, successClass } from "@/components/dashboard/quickadd/shared";
 import type { CaloriesSource } from "@/types/domain";
 
 const SOURCES: { value: CaloriesSource; label: string }[] = [
@@ -42,21 +42,37 @@ export function StepsForm({ dateStr, onDone }: { dateStr: string; onDone: () => 
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-2">
-      {state.error && <p className="text-xs text-red-600">{state.error}</p>}
-      {state.success && <p className="text-xs text-emerald-600">Passos registrados ✓</p>}
+      <div aria-live="polite">
+        {state.error && (
+          <p className={errorClass}>
+            <span aria-hidden="true">✕</span> {state.error}
+          </p>
+        )}
+        {state.success && (
+          <p className={successClass}>
+            <span aria-hidden="true">✓</span> Passos registrados
+          </p>
+        )}
+      </div>
       <div className="grid grid-cols-2 gap-2">
         <div className="flex flex-col gap-1">
-          <label className={labelClass}>Passos</label>
-          <input value={steps} onChange={(e) => setSteps(e.target.value)} placeholder="9500" className={inputClass} autoFocus />
+          <label htmlFor="steps-count" className={labelClass}>
+            Passos
+          </label>
+          <input id="steps-count" value={steps} onChange={(e) => setSteps(e.target.value)} placeholder="9500" className={inputClass} autoFocus />
         </div>
         <div className="flex flex-col gap-1">
-          <label className={labelClass}>Calorias gastas (opcional)</label>
-          <input value={calories} onChange={(e) => setCalories(e.target.value)} placeholder="380" className={inputClass} />
+          <label htmlFor="steps-calories" className={labelClass}>
+            Calorias gastas (opcional)
+          </label>
+          <input id="steps-calories" value={calories} onChange={(e) => setCalories(e.target.value)} placeholder="380" className={inputClass} />
         </div>
       </div>
       <div className="flex flex-col gap-1">
-        <label className={labelClass}>Fonte</label>
-        <select value={source} onChange={(e) => setSource(e.target.value as CaloriesSource)} className={inputClass}>
+        <label htmlFor="steps-source" className={labelClass}>
+          Fonte
+        </label>
+        <select id="steps-source" value={source} onChange={(e) => setSource(e.target.value as CaloriesSource)} className={inputClass}>
           {SOURCES.map((s) => (
             <option key={s.value} value={s.value}>
               {s.label}

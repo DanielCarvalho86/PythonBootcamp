@@ -12,16 +12,16 @@ import { CheckinForm } from "@/components/dashboard/quickadd/CheckinForm";
 
 type Mode = "weight" | "meal" | "steps" | "weight_training" | "swimming" | "other_activity" | "water" | "supplement" | "checkin" | null;
 
-const BUTTONS: { mode: Mode; label: string }[] = [
-  { mode: "weight", label: "+ Peso" },
-  { mode: "meal", label: "+ Refeicao" },
-  { mode: "steps", label: "+ Passos" },
-  { mode: "weight_training", label: "+ Musculacao" },
-  { mode: "swimming", label: "+ Natacao" },
-  { mode: "other_activity", label: "+ Outra atividade" },
-  { mode: "water", label: "+ Agua" },
-  { mode: "supplement", label: "+ Suplemento" },
-  { mode: "checkin", label: "+ Check-in" },
+const BUTTONS: { mode: Mode; label: string; icon: string }[] = [
+  { mode: "weight", label: "Peso", icon: "⚖️" },
+  { mode: "meal", label: "Refeicao", icon: "🍽️" },
+  { mode: "steps", label: "Passos", icon: "🚶" },
+  { mode: "weight_training", label: "Musculacao", icon: "🏋️" },
+  { mode: "swimming", label: "Natacao", icon: "🏊" },
+  { mode: "other_activity", label: "Outra atividade", icon: "✨" },
+  { mode: "water", label: "Agua", icon: "💧" },
+  { mode: "supplement", label: "Suplemento", icon: "💊" },
+  { mode: "checkin", label: "Check-in", icon: "📋" },
 ];
 
 export function QuickAddBar({
@@ -44,16 +44,21 @@ export function QuickAddBar({
   }
 
   return (
-    <Card>
-      <div className="flex flex-wrap gap-2">
+    <Card title="Adicionar rapido">
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-3">
         {BUTTONS.map((b) => (
           <button
             key={b.mode}
+            type="button"
             onClick={() => setMode(mode === b.mode ? null : b.mode)}
-            className={`rounded-full px-3 py-1.5 text-xs font-medium ${
-              mode === b.mode ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+            aria-pressed={mode === b.mode}
+            className={`flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-xl px-2 py-2.5 text-center text-[11px] font-medium leading-tight transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 ${
+              mode === b.mode ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 active:bg-zinc-200"
             }`}
           >
+            <span className="text-lg" aria-hidden="true">
+              {b.icon}
+            </span>
             {b.label}
           </button>
         ))}

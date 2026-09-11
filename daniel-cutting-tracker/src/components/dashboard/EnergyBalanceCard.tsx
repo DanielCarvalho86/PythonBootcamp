@@ -1,4 +1,4 @@
-import { Card, StatRow } from "@/components/dashboard/Card";
+import { Card, StatRow, Badge } from "@/components/dashboard/Card";
 
 export function EnergyBalanceCard({
   bmr,
@@ -20,12 +20,15 @@ export function EnergyBalanceCard({
       <StatRow label="Gasto de atividade" value={`${Math.round(activityCalories)} kcal`} />
       <StatRow label="Gasto energetico estimado (TDEE)" value={`${Math.round(tdee)} kcal`} />
       <StatRow label="Calorias consumidas" value={`${Math.round(consumed)} kcal`} />
-      <div className="mt-2 rounded-lg bg-zinc-50 px-3 py-2">
-        <p className="text-xs text-zinc-500">{isDeficit ? "Deficit estimado" : "Superavit estimado"}</p>
-        <p className={`text-lg font-semibold ${isDeficit ? "text-emerald-600" : "text-amber-600"}`}>
-          {balance > 0 ? "+" : ""}
-          {Math.round(balance)} kcal
-        </p>
+      <div className="mt-2 flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2.5">
+        <div>
+          <p className="text-xs text-zinc-500">{isDeficit ? "Deficit estimado" : "Superavit estimado"}</p>
+          <p className="text-lg font-semibold text-zinc-900">
+            {balance > 0 ? "+" : ""}
+            {Math.round(balance)} kcal
+          </p>
+        </div>
+        <Badge tone={isDeficit ? "good" : "warning"}>{isDeficit ? "Deficit" : "Superavit"}</Badge>
       </div>
       <p className="mt-2 text-[11px] text-zinc-400">
         Este e um valor estimado, nao uma medicao exata. Nao use as calorias de exercicio como autorizacao automatica

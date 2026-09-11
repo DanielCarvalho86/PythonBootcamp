@@ -49,7 +49,7 @@ export default async function SettingsPage() {
         <StatRow label="Alimentos desativados" value={String(inactiveFoods)} />
         <Link
           href="/settings/foods"
-          className="mt-3 inline-block rounded-lg bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white"
+          className="mt-3 inline-block min-h-[40px] rounded-lg bg-zinc-900 px-3.5 py-2 text-xs font-medium text-white hover:bg-zinc-800"
         >
           Gerenciar alimentos
         </Link>
@@ -59,7 +59,7 @@ export default async function SettingsPage() {
         <StatRow label="Planos cadastrados" value={String(planCount)} />
         <Link
           href="/settings/plans"
-          className="mt-3 inline-block rounded-lg bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white"
+          className="mt-3 inline-block min-h-[40px] rounded-lg bg-zinc-900 px-3.5 py-2 text-xs font-medium text-white hover:bg-zinc-800"
         >
           Gerenciar planos
         </Link>

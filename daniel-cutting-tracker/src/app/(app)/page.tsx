@@ -6,6 +6,7 @@ import { todayDateOnlyString } from "@/lib/services/dateOnly";
 import { calculateEnergyBalance } from "@/lib/activities/engine";
 import { planToTargets } from "@/lib/services/dayPlan";
 import { syncAlertsForToday } from "@/lib/services/syncAlerts";
+import { Card, Badge, RangeBar } from "@/components/dashboard/Card";
 import { MessageInbox } from "@/components/forms/MessageInbox";
 import { WeightCard } from "@/components/dashboard/WeightCard";
 import { NutritionCard } from "@/components/dashboard/NutritionCard";
@@ -85,14 +86,9 @@ export default async function TodayPage() {
     creatineTaken: creatineEntry?.taken ?? false,
   };
 
-  const weightTrendArrow =
-    dashboard.currentWeight !== null && dashboard.sevenDayAvgWeight !== null
-      ? dashboard.currentWeight < dashboard.sevenDayAvgWeight - 0.1
-        ? "↓"
-        : dashboard.currentWeight > dashboard.sevenDayAvgWeight + 0.1
-          ? "↑"
-          : "→"
-      : null;
+  const weightTrendArrow = dashboard.weightTrend.hasEnoughData
+    ? { down: "↓", stable: "→", up: "↑" }[dashboard.weightTrend.direction ?? "stable"]
+    : null;
 
   return (
     <div className="flex flex-col gap-4">
@@ -100,9 +96,12 @@ export default async function TodayPage() {
         <h1 className="text-lg font-semibold text-zinc-900">Hoje</h1>
         <p className="text-xs text-zinc-500">{today}</p>
         {dashboard.dailyLog?.dayStatus === "above_target" && (
-          <p className="mt-1 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
-            Seu consumo de hoje ja esta acima da meta planejada. As proximas refeicoes foram preservadas dentro dos
-            limites configurados.
+          <p className="mt-2 flex items-start gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
+            <span aria-hidden="true">⚠</span>
+            <span>
+              Seu consumo de hoje ja esta acima da meta planejada. As proximas refeicoes foram preservadas dentro dos
+              limites configurados.
+            </span>
           </p>
         )}
       </div>
@@ -113,6 +112,7 @@ export default async function TodayPage() {
           referenceWeight={profile.referenceWeightKg}
           referenceDate={profile.referenceWeightAt.toISOString().slice(0, 10)}
           sevenDayAvg={dashboard.sevenDayAvgWeight}
+          trend={dashboard.weightTrend}
         />
       )}
 
@@ -149,25 +149,36 @@ export default async function TodayPage() {
         <PlanCard planMealOrder={dashboard.planMealsAll} consumedByMealType={consumedByMealType} futureMeals={dashboard.futurePlanMeals} />
       )}
 
-      {targets && (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-4 text-xs text-zinc-500">
-          <p>
-            Agua: {Math.round(dashboard.waterTotalMl)} / {targets ? `${dashboard.plan?.waterMinMl}-${dashboard.plan?.waterMaxMl}` : "-"} ml
-          </p>
-          <p>
-            Suplementos: {dashboard.supplements.filter((s) => s.taken).map((s) => s.type).join(", ") || "nenhum marcado hoje"}
-          </p>
-        </div>
+      {targets && dashboard.plan && (
+        <Card title="Agua e suplementos">
+          <div className="flex items-baseline justify-between text-sm">
+            <span className="text-zinc-500">Agua</span>
+            <span className="font-medium text-zinc-900">
+              {Math.round(dashboard.waterTotalMl)} / {dashboard.plan.waterMinMl}-{dashboard.plan.waterMaxMl} ml
+            </span>
+          </div>
+          <div className="mt-1.5 mb-3">
+            <RangeBar value={dashboard.waterTotalMl} min={dashboard.plan.waterMinMl} max={dashboard.plan.waterMaxMl} />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Badge tone={supplementDefaults.wheyTaken ? "good" : "neutral"} icon={supplementDefaults.wheyTaken ? "✓" : undefined}>
+              Whey {supplementDefaults.wheyTaken ? "tomado" : "pendente"}
+            </Badge>
+            <Badge tone={supplementDefaults.creatineTaken ? "good" : "neutral"} icon={supplementDefaults.creatineTaken ? "✓" : undefined}>
+              Creatina {supplementDefaults.creatineTaken ? "tomada" : "pendente"}
+            </Badge>
+          </div>
+        </Card>
       )}
 
       <AlertsSummaryCard alerts={alertCandidates.map((c, i) => ({ id: `${c.type}-${i}`, severity: c.severity, title: c.title, message: c.message }))} />
 
       <Link
         href="/progress"
-        className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4 text-sm text-zinc-700 hover:border-zinc-300"
+        className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4 text-sm font-medium text-zinc-700 shadow-sm hover:border-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900"
       >
-        <span>
-          Minha evolucao {weightTrendArrow && <span className="ml-1 text-base">{weightTrendArrow}</span>}
+        <span className="flex items-center gap-1.5">
+          Minha evolucao {weightTrendArrow && <span className="text-base">{weightTrendArrow}</span>}
         </span>
         <span className="text-xs text-zinc-400">ver detalhes →</span>
       </Link>

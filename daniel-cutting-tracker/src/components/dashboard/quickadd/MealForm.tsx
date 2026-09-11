@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { addManualMealEntryAction } from "@/app/(app)/quick-add-actions";
-import { inputClass, labelClass, submitClass } from "@/components/dashboard/quickadd/shared";
+import { inputClass, labelClass, submitClass, errorClass, successClass } from "@/components/dashboard/quickadd/shared";
 import { MEAL_TYPES, type FoodUnit, type MealType } from "@/types/domain";
 import { mealTypeLabel } from "@/lib/labels";
 
@@ -58,12 +58,24 @@ export function MealForm({ dateStr, foods, onDone }: { dateStr: string; foods: F
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-2">
-      {state.error && <p className="text-xs text-red-600">{state.error}</p>}
-      {state.success && <p className="text-xs text-emerald-600">Refeicao registrada ✓</p>}
+      <div aria-live="polite">
+        {state.error && (
+          <p className={errorClass}>
+            <span aria-hidden="true">✕</span> {state.error}
+          </p>
+        )}
+        {state.success && (
+          <p className={successClass}>
+            <span aria-hidden="true">✓</span> Refeicao registrada
+          </p>
+        )}
+      </div>
 
       <div className="flex flex-col gap-1">
-        <label className={labelClass}>Refeicao</label>
-        <select value={mealType} onChange={(e) => setMealType(e.target.value as MealType)} className={inputClass}>
+        <label htmlFor="meal-type" className={labelClass}>
+          Refeicao
+        </label>
+        <select id="meal-type" value={mealType} onChange={(e) => setMealType(e.target.value as MealType)} className={inputClass}>
           {MEAL_TYPES.map((t) => (
             <option key={t} value={t}>
               {mealTypeLabel(t)}
@@ -76,8 +88,15 @@ export function MealForm({ dateStr, foods, onDone }: { dateStr: string; foods: F
         {rows.map((row, i) => (
           <div key={i} className="grid grid-cols-[1fr_70px_70px_auto] items-end gap-1">
             <div className="flex flex-col gap-1">
-              {i === 0 && <label className={labelClass}>Alimento</label>}
-              <select value={row.foodId} onChange={(e) => updateRow(i, { foodId: e.target.value })} className={inputClass}>
+              <label htmlFor={`meal-food-${i}`} className={i === 0 ? labelClass : "sr-only"}>
+                Alimento
+              </label>
+              <select
+                id={`meal-food-${i}`}
+                value={row.foodId}
+                onChange={(e) => updateRow(i, { foodId: e.target.value })}
+                className={inputClass}
+              >
                 {foods.map((f) => (
                   <option key={f.id} value={f.id}>
                     {f.name}
@@ -86,12 +105,22 @@ export function MealForm({ dateStr, foods, onDone }: { dateStr: string; foods: F
               </select>
             </div>
             <div className="flex flex-col gap-1">
-              {i === 0 && <label className={labelClass}>Qtd</label>}
-              <input value={row.quantity} onChange={(e) => updateRow(i, { quantity: e.target.value })} placeholder="100" className={inputClass} />
+              <label htmlFor={`meal-qty-${i}`} className={i === 0 ? labelClass : "sr-only"}>
+                Quantidade
+              </label>
+              <input
+                id={`meal-qty-${i}`}
+                value={row.quantity}
+                onChange={(e) => updateRow(i, { quantity: e.target.value })}
+                placeholder="100"
+                className={inputClass}
+              />
             </div>
             <div className="flex flex-col gap-1">
-              {i === 0 && <label className={labelClass}>Un.</label>}
-              <select value={row.unit} onChange={(e) => updateRow(i, { unit: e.target.value as FoodUnit })} className={inputClass}>
+              <label htmlFor={`meal-unit-${i}`} className={i === 0 ? labelClass : "sr-only"}>
+                Unidade
+              </label>
+              <select id={`meal-unit-${i}`} value={row.unit} onChange={(e) => updateRow(i, { unit: e.target.value as FoodUnit })} className={inputClass}>
                 <option value="g">g</option>
                 <option value="ml">ml</option>
                 <option value="unit">unid</option>
@@ -104,7 +133,8 @@ export function MealForm({ dateStr, foods, onDone }: { dateStr: string; foods: F
               type="button"
               onClick={() => setRows((prev) => prev.filter((_, idx) => idx !== i))}
               disabled={rows.length === 1}
-              className="pb-1.5 text-xs text-red-400 disabled:opacity-30"
+              aria-label="Remover alimento"
+              className="min-h-[44px] px-2 pb-1.5 text-sm text-red-400 disabled:opacity-30"
             >
               ✕
             </button>
@@ -115,7 +145,7 @@ export function MealForm({ dateStr, foods, onDone }: { dateStr: string; foods: F
       <button
         type="button"
         onClick={() => setRows((prev) => [...prev, emptyRow(foods[0]?.id ?? "")])}
-        className="self-start text-xs text-zinc-500 hover:text-zinc-900"
+        className="min-h-[44px] self-start text-sm text-zinc-500 hover:text-zinc-900"
       >
         + Adicionar outro alimento
       </button>

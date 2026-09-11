@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { addWaterEntryAction } from "@/app/(app)/log-actions";
-import { inputClass, labelClass, submitClass } from "@/components/dashboard/quickadd/shared";
+import { inputClass, labelClass, submitClass, errorClass, successClass } from "@/components/dashboard/quickadd/shared";
 
 export function WaterForm({
   dateStr,
@@ -42,12 +42,24 @@ export function WaterForm({
       <p className="text-xs text-zinc-500">
         Progresso: {Math.round(currentMl)} / {Math.round(targetMl)} ml
       </p>
-      {state.error && <p className="text-xs text-red-600">{state.error}</p>}
-      {state.success && <p className="text-xs text-emerald-600">Agua registrada ✓</p>}
+      <div aria-live="polite">
+        {state.error && (
+          <p className={errorClass}>
+            <span aria-hidden="true">✕</span> {state.error}
+          </p>
+        )}
+        {state.success && (
+          <p className={successClass}>
+            <span aria-hidden="true">✓</span> Agua registrada
+          </p>
+        )}
+      </div>
       <div className="flex items-end gap-2">
         <div className="flex flex-col gap-1">
-          <label className={labelClass}>Quantidade (ml)</label>
-          <input value={amount} onChange={(e) => setAmount(e.target.value)} className={inputClass} autoFocus />
+          <label htmlFor="water-amount" className={labelClass}>
+            Quantidade (ml)
+          </label>
+          <input id="water-amount" value={amount} onChange={(e) => setAmount(e.target.value)} className={inputClass} autoFocus />
         </div>
         <div className="flex gap-1">
           {[250, 500, 750].map((preset) => (
@@ -55,7 +67,8 @@ export function WaterForm({
               key={preset}
               type="button"
               onClick={() => setAmount(String(preset))}
-              className="rounded border border-zinc-200 px-2 py-1 text-xs text-zinc-500 hover:bg-zinc-50"
+              aria-label={`Definir quantidade para ${preset} ml`}
+              className="min-h-[44px] rounded border border-zinc-200 px-2.5 py-1 text-xs text-zinc-500 hover:bg-zinc-50"
             >
               {preset}
             </button>

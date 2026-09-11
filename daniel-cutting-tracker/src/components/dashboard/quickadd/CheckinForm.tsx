@@ -2,21 +2,23 @@
 
 import { useState, useTransition } from "react";
 import { setDailyCheckinAction } from "@/app/(app)/quick-add-actions";
-import { labelClass, submitClass } from "@/components/dashboard/quickadd/shared";
+import { labelClass, submitClass, successClass } from "@/components/dashboard/quickadd/shared";
 
 const SCALE = [1, 2, 3, 4, 5];
 
 function ScalePicker({ label, value, onChange }: { label: string; value: number | null; onChange: (v: number) => void }) {
   return (
-    <div className="flex flex-col gap-1">
-      <label className={labelClass}>{label} (1-5)</label>
-      <div className="flex gap-1">
+    <fieldset className="flex flex-col gap-1 border-0 p-0">
+      <legend className={labelClass}>{label} (1-5)</legend>
+      <div className="flex gap-1.5" role="group" aria-label={label}>
         {SCALE.map((n) => (
           <button
             key={n}
             type="button"
             onClick={() => onChange(n)}
-            className={`h-8 w-8 rounded-full text-xs font-medium ${
+            aria-pressed={value === n}
+            aria-label={`${label}: ${n} de 5`}
+            className={`h-11 w-11 rounded-full text-sm font-medium ${
               value === n ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
             }`}
           >
@@ -24,7 +26,7 @@ function ScalePicker({ label, value, onChange }: { label: string; value: number 
           </button>
         ))}
       </div>
-    </div>
+    </fieldset>
   );
 }
 
@@ -53,7 +55,13 @@ export function CheckinForm({ dateStr, onDone }: { dateStr: string; onDone: () =
       <p className="text-[11px] text-zinc-400">
         Usado apenas para observar padroes ao longo do tempo (alertas de energia/fome/desempenho). Nunca reduz sua dieta automaticamente.
       </p>
-      {success && <p className="text-xs text-emerald-600">Check-in salvo ✓</p>}
+      <div aria-live="polite">
+        {success && (
+          <p className={successClass}>
+            <span aria-hidden="true">✓</span> Check-in salvo
+          </p>
+        )}
+      </div>
       <ScalePicker label="Fome" value={hunger} onChange={setHunger} />
       <ScalePicker label="Energia" value={energy} onChange={setEnergy} />
       <ScalePicker label="Desempenho no treino" value={performance} onChange={setPerformance} />

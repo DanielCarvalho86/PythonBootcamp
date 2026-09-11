@@ -1,4 +1,5 @@
-import { Card } from "@/components/dashboard/Card";
+import { Card, Badge } from "@/components/dashboard/Card";
+import { AccordionItem } from "@/components/dashboard/Accordion";
 import { MealEntryRow, type MealEntryRowData } from "@/components/meals/MealEntryRow";
 import { calculateMealNutrition } from "@/lib/nutrition/engine";
 import type { AdjustableMeal } from "@/lib/adjustment/engine";
@@ -32,22 +33,31 @@ export function PlanCard({
 
   return (
     <Card title="Plano do dia">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
         {planMealOrder.map((planMeal) => {
           const consumed = consumedByMealType.get(planMeal.mealType);
           const future = futureByMealId.get(planMeal.id);
+          const isShake = planMeal.mealType === "shake";
+          const isProtected = isShake || future?.isProtectedComposition === true;
 
           return (
-            <div key={planMeal.id}>
-              <div className="mb-1 flex items-center justify-between">
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                  {mealTypeLabel(planMeal.mealType)}
-                </h3>
-                <span className={`text-[10px] font-medium ${consumed ? "text-emerald-600" : "text-zinc-400"}`}>
-                  {consumed ? "Consumido" : "Planejado (ajustado)"}
-                </span>
-              </div>
-
+            <AccordionItem
+              key={planMeal.id}
+              title={isShake ? "Shake" : mealTypeLabel(planMeal.mealType)}
+              defaultOpen={Boolean(consumed)}
+              badge={
+                isProtected ? (
+                  <Badge tone="info" icon="🔒">
+                    {isShake ? "SHAKE — REGRA FIXA" : "REGRA FIXA"}
+                  </Badge>
+                ) : undefined
+              }
+              subtitle={
+                <Badge tone={consumed ? "good" : "neutral"} icon={consumed ? "✓" : undefined}>
+                  {consumed ? "Consumido" : "Planejado"}
+                </Badge>
+              }
+            >
               {consumed ? (
                 <div className="divide-y divide-zinc-100">
                   {consumed.map((entry) => (
@@ -55,28 +65,36 @@ export function PlanCard({
                   ))}
                 </div>
               ) : future ? (
-                <ul className="flex flex-col gap-1 text-sm text-zinc-600">
-                  {future.items.map((item) => (
-                    <li key={item.id} className="flex justify-between">
-                      <span>{item.foodName}</span>
-                      <span className="text-zinc-400">{Math.round(item.currentGrams)}g</span>
+                <>
+                  <ul className="flex flex-col gap-1 text-sm text-zinc-600">
+                    {future.items.map((item) => (
+                      <li key={item.id} className="flex justify-between">
+                        <span>{item.foodName}</span>
+                        <span className="text-zinc-400">{Math.round(item.currentGrams)}g</span>
+                      </li>
+                    ))}
+                    <li className="flex justify-between pt-1 text-xs font-medium text-zinc-900">
+                      <span>Total planejado</span>
+                      <span>
+                        {Math.round(
+                          calculateMealNutrition(future.items.map((i) => ({ grams: i.currentGrams, facts: i.facts })))
+                            .calories,
+                        )}{" "}
+                        kcal
+                      </span>
                     </li>
-                  ))}
-                  <li className="flex justify-between pt-1 text-xs font-medium text-zinc-900">
-                    <span>Total planejado</span>
-                    <span>
-                      {Math.round(
-                        calculateMealNutrition(future.items.map((i) => ({ grams: i.currentGrams, facts: i.facts })))
-                          .calories,
-                      )}{" "}
-                      kcal
-                    </span>
-                  </li>
-                </ul>
+                  </ul>
+                  {isProtected && (
+                    <p className="mt-3 rounded-lg bg-blue-50 px-2.5 py-2 text-[11px] text-blue-700">
+                      Composicao fixa: 5 componentes obrigatorios (whey, fruta, leite desnatado, aveia, castanhas) +
+                      creatina. O sistema pode ajustar quantidades, mas nunca remove ou zera um componente.
+                    </p>
+                  )}
+                </>
               ) : (
                 <p className="text-xs text-zinc-400">Sem plano cadastrado para esta refeicao.</p>
               )}
-            </div>
+            </AccordionItem>
           );
         })}
       </div>

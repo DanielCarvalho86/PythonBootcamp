@@ -7,12 +7,17 @@ import {
   getLatestAdjustmentForDate,
 } from "@/lib/services/dayPlan";
 import { calculateMealNutrition } from "@/lib/nutrition/engine";
+import { calculateWeightTrend } from "@/lib/analysis/trend";
 import { subDays } from "date-fns";
+
+// Wide enough that calculateWeightTrend (7d rolling avg vs. the 7d avg
+// from ~7 days before that) has real history to compare, not just today's window.
+const WEIGHT_TREND_LOOKBACK_DAYS = 21;
 
 export async function getDashboardData(userId: string, dateStr: string) {
   const date = toDateOnly(dateStr);
 
-  const [mealEntries, activities, dailyLog, plan, recentWeights, waterEntries, supplements] = await Promise.all([
+  const [mealEntries, activities, dailyLog, plan, recentWeights, weightsForTrend, waterEntries, supplements] = await Promise.all([
     prisma.mealEntry.findMany({ where: { userId, date }, include: { food: true }, orderBy: { createdAt: "asc" } }),
     prisma.physicalActivity.findMany({ where: { userId, date }, orderBy: { createdAt: "asc" } }),
     prisma.dailyLog.findUnique({ where: { userId_date: { userId, date } } }),
@@ -21,9 +26,17 @@ export async function getDashboardData(userId: string, dateStr: string) {
       where: { userId, date: { gte: subDays(date, 7) } },
       orderBy: { date: "asc" },
     }),
+    prisma.weightEntry.findMany({
+      where: { userId, date: { gte: subDays(date, WEIGHT_TREND_LOOKBACK_DAYS) } },
+      orderBy: { date: "asc" },
+    }),
     prisma.waterEntry.findMany({ where: { userId, date } }),
     prisma.supplementEntry.findMany({ where: { userId, date } }),
   ]);
+
+  const weightTrend = calculateWeightTrend(
+    weightsForTrend.map((w) => ({ date: w.date.toISOString().slice(0, 10), weightKg: w.weightKg })),
+  );
 
   const mealsByType = new Map<string, typeof mealEntries>();
   for (const entry of mealEntries) {
@@ -65,6 +78,7 @@ export async function getDashboardData(userId: string, dateStr: string) {
     planMealsAll,
     currentWeight,
     sevenDayAvgWeight: sevenDayAvg,
+    weightTrend,
     waterTotalMl,
     supplements,
   };

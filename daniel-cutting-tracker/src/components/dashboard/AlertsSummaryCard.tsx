@@ -1,12 +1,8 @@
 import Link from "next/link";
-import { Card } from "@/components/dashboard/Card";
+import { Card, Badge, type Tone } from "@/components/dashboard/Card";
 
 const SEVERITY_ORDER: Record<string, number> = { WARNING: 0, NOTICE: 1, INFO: 2 };
-const SEVERITY_STYLES: Record<string, string> = {
-  INFO: "bg-zinc-100 text-zinc-600",
-  NOTICE: "bg-amber-50 text-amber-700",
-  WARNING: "bg-rose-50 text-rose-700",
-};
+const SEVERITY_TONE: Record<string, Tone> = { INFO: "neutral", NOTICE: "warning", WARNING: "alert" };
 
 export interface AlertSummaryItem {
   id: string;
@@ -25,18 +21,19 @@ export function AlertsSummaryCard({ alerts }: { alerts: AlertSummaryItem[] }) {
     <Card title="Alertas">
       <div className="flex flex-col gap-2">
         {top.map((alert) => (
-          <div key={alert.id} className="flex items-start gap-2">
-            <span className={`mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase ${SEVERITY_STYLES[alert.severity] ?? SEVERITY_STYLES.INFO}`}>
-              {alert.severity}
-            </span>
-            <div>
+          <div key={alert.id} className="flex items-start gap-2 rounded-lg bg-zinc-50 px-2.5 py-2">
+            <Badge tone={SEVERITY_TONE[alert.severity] ?? "neutral"}>{alert.severity}</Badge>
+            <div className="min-w-0">
               <p className="text-xs font-medium text-zinc-900">{alert.title}</p>
               <p className="text-[11px] text-zinc-500">{alert.message}</p>
             </div>
           </div>
         ))}
       </div>
-      <Link href="/alerts" className="mt-3 inline-block text-xs font-medium text-zinc-500 hover:text-zinc-900">
+      <Link
+        href="/alerts"
+        className="mt-3 inline-block min-h-[36px] py-1.5 text-xs font-medium text-zinc-500 hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900"
+      >
         Ver todos ({alerts.length}) →
       </Link>
     </Card>

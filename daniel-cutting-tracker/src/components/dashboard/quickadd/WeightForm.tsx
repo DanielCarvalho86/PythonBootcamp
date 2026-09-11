@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { addWeightEntryAction } from "@/app/(app)/log-actions";
-import { inputClass, labelClass, submitClass } from "@/components/dashboard/quickadd/shared";
+import { inputClass, labelClass, submitClass, errorClass, successClass } from "@/components/dashboard/quickadd/shared";
 
 const CONDITIONS = [
   { value: "fasted_on_waking", label: "Ao acordar" },
@@ -39,21 +39,37 @@ export function WeightForm({ dateStr, onDone }: { dateStr: string; onDone: () =>
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-2">
-      {state.error && <p className="text-xs text-red-600">{state.error}</p>}
-      {state.success && <p className="text-xs text-emerald-600">Peso registrado ✓</p>}
+      <div aria-live="polite">
+        {state.error && (
+          <p className={errorClass}>
+            <span aria-hidden="true">✕</span> {state.error}
+          </p>
+        )}
+        {state.success && (
+          <p className={successClass}>
+            <span aria-hidden="true">✓</span> Peso registrado
+          </p>
+        )}
+      </div>
       <div className="grid grid-cols-2 gap-2">
         <div className="flex flex-col gap-1">
-          <label className={labelClass}>Peso (kg)</label>
-          <input value={weightKg} onChange={(e) => setWeightKg(e.target.value)} placeholder="107,30" className={inputClass} autoFocus />
+          <label htmlFor="weight-kg" className={labelClass}>
+            Peso (kg)
+          </label>
+          <input id="weight-kg" value={weightKg} onChange={(e) => setWeightKg(e.target.value)} placeholder="107,30" className={inputClass} autoFocus />
         </div>
         <div className="flex flex-col gap-1">
-          <label className={labelClass}>Horario</label>
-          <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputClass} />
+          <label htmlFor="weight-time" className={labelClass}>
+            Horario
+          </label>
+          <input id="weight-time" type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputClass} />
         </div>
       </div>
       <div className="flex flex-col gap-1">
-        <label className={labelClass}>Condicao da medicao</label>
-        <select value={condition} onChange={(e) => setCondition(e.target.value)} className={inputClass}>
+        <label htmlFor="weight-condition" className={labelClass}>
+          Condicao da medicao
+        </label>
+        <select id="weight-condition" value={condition} onChange={(e) => setCondition(e.target.value)} className={inputClass}>
           {CONDITIONS.map((c) => (
             <option key={c.value} value={c.value}>
               {c.label}
@@ -62,8 +78,10 @@ export function WeightForm({ dateStr, onDone }: { dateStr: string; onDone: () =>
         </select>
       </div>
       <div className="flex flex-col gap-1">
-        <label className={labelClass}>Observacao</label>
-        <input value={notes} onChange={(e) => setNotes(e.target.value)} className={inputClass} />
+        <label htmlFor="weight-notes" className={labelClass}>
+          Observacao
+        </label>
+        <input id="weight-notes" value={notes} onChange={(e) => setNotes(e.target.value)} className={inputClass} />
       </div>
       <button type="submit" disabled={isPending} className={submitClass}>
         {isPending ? "Salvando..." : "Salvar peso"}

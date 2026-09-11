@@ -96,7 +96,7 @@ export function FoodForm({
       <button
         type="submit"
         disabled={isPending}
-        className="self-start rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50"
+        className="min-h-[44px] self-start rounded-lg bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isPending ? "Salvando..." : submitLabel}
       </button>
@@ -146,7 +146,7 @@ function Field({
           step={step}
           defaultValue={defaultValue}
           required={required}
-          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+          className="min-h-[44px] rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
         />
       )}
       {hint && !error && <span className="text-[11px] text-zinc-400">{hint}</span>}

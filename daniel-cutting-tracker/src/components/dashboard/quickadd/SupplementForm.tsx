@@ -22,7 +22,7 @@ export function SupplementForm({ dateStr, defaults, onDone }: { dateStr: string;
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="flex items-center justify-between rounded-lg border border-zinc-200 px-3 py-2 text-sm">
+      <label className="flex min-h-[44px] items-center justify-between rounded-lg border border-zinc-200 px-3 py-2.5 text-sm">
         <span>
           Whey <span className="text-xs text-zinc-400">({defaults.wheyTargetG} g)</span>
         </span>
@@ -34,7 +34,7 @@ export function SupplementForm({ dateStr, defaults, onDone }: { dateStr: string;
           className="h-4 w-4"
         />
       </label>
-      <label className="flex items-center justify-between rounded-lg border border-zinc-200 px-3 py-2 text-sm">
+      <label className="flex min-h-[44px] items-center justify-between rounded-lg border border-zinc-200 px-3 py-2.5 text-sm">
         <span>
           Creatina <span className="text-xs text-zinc-400">({defaults.creatineTargetG} g)</span>
         </span>

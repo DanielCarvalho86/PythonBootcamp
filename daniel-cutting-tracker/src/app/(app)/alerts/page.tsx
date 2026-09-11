@@ -33,8 +33,16 @@ export default async function AlertsPage({
         </p>
       </div>
 
-      <form className="flex flex-wrap gap-2">
-        <select name="severity" defaultValue={severity ?? ""} className="rounded-lg border border-zinc-300 px-2 py-1.5 text-xs">
+      <form className="flex flex-wrap items-center gap-2">
+        <label htmlFor="alert-severity" className="sr-only">
+          Filtrar por severidade
+        </label>
+        <select
+          id="alert-severity"
+          name="severity"
+          defaultValue={severity ?? ""}
+          className="min-h-[40px] rounded-lg border border-zinc-300 px-2.5 py-1.5 text-xs text-zinc-700"
+        >
           <option value="">Todas as severidades</option>
           {ALERT_SEVERITIES.map((s) => (
             <option key={s} value={s}>
@@ -42,7 +50,15 @@ export default async function AlertsPage({
             </option>
           ))}
         </select>
-        <select name="type" defaultValue={type ?? ""} className="rounded-lg border border-zinc-300 px-2 py-1.5 text-xs">
+        <label htmlFor="alert-type" className="sr-only">
+          Filtrar por tipo
+        </label>
+        <select
+          id="alert-type"
+          name="type"
+          defaultValue={type ?? ""}
+          className="min-h-[40px] rounded-lg border border-zinc-300 px-2.5 py-1.5 text-xs text-zinc-700"
+        >
           <option value="">Todos os tipos</option>
           {ALERT_TYPES.map((t) => (
             <option key={t} value={t}>
@@ -50,7 +66,7 @@ export default async function AlertsPage({
             </option>
           ))}
         </select>
-        <button type="submit" className="rounded-lg bg-zinc-100 px-3 py-1.5 text-xs text-zinc-700">
+        <button type="submit" className="min-h-[40px] rounded-lg bg-zinc-100 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-200">
           Filtrar
         </button>
         {(severity || type) && (
@@ -61,7 +77,8 @@ export default async function AlertsPage({
       </form>
 
       {alerts.length === 0 ? (
-        <p className="rounded-xl border border-zinc-100 bg-white p-4 text-sm text-zinc-400">
+        <p className="flex items-center gap-2 rounded-xl border border-zinc-100 bg-white p-4 text-sm text-zinc-400">
+          <span aria-hidden="true">✓</span>
           Nenhum alerta no momento — seus dados recentes estao dentro do esperado.
         </p>
       ) : (
