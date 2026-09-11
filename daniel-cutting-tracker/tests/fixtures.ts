@@ -91,6 +91,54 @@ export async function createTestUserWithPlan(dateStr = "2026-09-10") {
       fiberPer100g: 2,
     },
   });
+  const leite = await prisma.food.create({
+    data: {
+      name: "Leite desnatado",
+      category: "dairy",
+      servingUnit: "ml",
+      caloriesPer100g: 35,
+      proteinPer100g: 3.4,
+      carbsPer100g: 5,
+      fatPer100g: 0.2,
+      fiberPer100g: 0,
+    },
+  });
+  const aveia = await prisma.food.create({
+    data: {
+      name: "Aveia em flocos",
+      category: "carb",
+      servingUnit: "g",
+      caloriesPer100g: 394,
+      proteinPer100g: 13.9,
+      carbsPer100g: 67,
+      fatPer100g: 8.5,
+      fiberPer100g: 9.1,
+    },
+  });
+  const castanha = await prisma.food.create({
+    data: {
+      name: "Castanha do para",
+      category: "fat",
+      servingUnit: "g",
+      caloriesPer100g: 656,
+      proteinPer100g: 14.3,
+      carbsPer100g: 12.3,
+      fatPer100g: 66.4,
+      fiberPer100g: 7.9,
+    },
+  });
+  const creatina = await prisma.food.create({
+    data: {
+      name: "Creatina monohidratada",
+      category: "supplement",
+      servingUnit: "g",
+      caloriesPer100g: 0,
+      proteinPer100g: 0,
+      carbsPer100g: 0,
+      fatPer100g: 0,
+      fiberPer100g: 0,
+    },
+  });
 
   const plan = await prisma.nutritionPlan.create({
     data: {
@@ -130,10 +178,10 @@ export async function createTestUserWithPlan(dateStr = "2026-09-10") {
     },
   });
 
-  await prisma.planMeal.create({
+  const shake = await prisma.planMeal.create({
     data: {
       planId: plan.id,
-      mealType: "other",
+      mealType: "shake",
       name: "Shake",
       order: 2,
       isProtectedComposition: true,
@@ -141,6 +189,10 @@ export async function createTestUserWithPlan(dateStr = "2026-09-10") {
         create: [
           { foodId: whey.id, targetQuantityG: 40, minQuantityG: 30, maxQuantityG: 50, adjustmentStepG: 5, role: "protein", isMandatory: true },
           { foodId: banana.id, targetQuantityG: 100, minQuantityG: 50, maxQuantityG: 150, adjustmentStepG: 10, role: "carb", isMandatory: true },
+          { foodId: leite.id, targetQuantityG: 200, minQuantityG: 150, maxQuantityG: 250, adjustmentStepG: 25, role: "fixed", isMandatory: true },
+          { foodId: aveia.id, targetQuantityG: 10, minQuantityG: 5, maxQuantityG: 20, adjustmentStepG: 5, role: "carb", isMandatory: true },
+          { foodId: castanha.id, targetQuantityG: 5, minQuantityG: 3, maxQuantityG: 10, adjustmentStepG: 1, role: "fat", isMandatory: true },
+          { foodId: creatina.id, targetQuantityG: 5, minQuantityG: 5, maxQuantityG: 5, adjustmentStepG: 0, role: "fixed", isMandatory: true },
         ],
       },
     },
@@ -162,5 +214,11 @@ export async function createTestUserWithPlan(dateStr = "2026-09-10") {
     },
   });
 
-  return { user, plan, foods: { frango, cuscuz, azeite, ovo, whey, banana }, dinnerMealId: dinner.id };
+  return {
+    user,
+    plan,
+    foods: { frango, cuscuz, azeite, ovo, whey, banana, leite, aveia, castanha, creatina },
+    dinnerMealId: dinner.id,
+    shakeMealId: shake.id,
+  };
 }

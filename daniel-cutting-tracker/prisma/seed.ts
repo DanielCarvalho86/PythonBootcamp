@@ -180,7 +180,7 @@ async function main() {
     await prisma.planMeal.create({
       data: {
         planId: plan.id,
-        mealType: "other",
+        mealType: "shake",
         name: "Shake",
         order: 3,
         isProtectedComposition: true,

@@ -116,8 +116,10 @@ export async function buildFutureAdjustableMeals(
       mealType: meal.mealType as MealType,
       name: meal.name,
       isProtectedComposition: meal.isProtectedComposition,
+      isAdjustable: meal.isAdjustable,
       items: meal.items.map((item) => ({
         id: item.id,
+        foodId: item.foodId,
         foodName: item.food.name,
         facts: {
           caloriesPer100g: item.food.caloriesPer100g,

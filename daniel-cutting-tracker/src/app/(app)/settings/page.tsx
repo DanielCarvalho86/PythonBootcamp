@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireUserId } from "@/lib/auth";
 import { prisma } from "@/lib/database/prisma";
 import { Card, StatRow } from "@/components/dashboard/Card";
@@ -5,9 +6,11 @@ import { calculateAgeYears } from "@/lib/calculations/bmr";
 
 export default async function SettingsPage() {
   const userId = await requireUserId();
-  const [profile, foods] = await Promise.all([
+  const [profile, activeFoods, inactiveFoods, planCount] = await Promise.all([
     prisma.profile.findUnique({ where: { userId } }),
-    prisma.food.count(),
+    prisma.food.count({ where: { active: true } }),
+    prisma.food.count({ where: { active: false } }),
+    prisma.nutritionPlan.count({ where: { userId } }),
   ]);
 
   if (!profile) {
@@ -42,11 +45,24 @@ export default async function SettingsPage() {
       </Card>
 
       <Card title="Banco de alimentos">
-        <StatRow label="Alimentos cadastrados" value={String(foods)} />
-        <p className="mt-2 text-[11px] text-zinc-400">
-          Cadastro de novos alimentos ainda nao tem tela dedicada nesta primeira versao — use o Prisma Studio
-          (`npx prisma studio`) ou peca para adicionar via seed.
-        </p>
+        <StatRow label="Alimentos ativos" value={String(activeFoods)} />
+        <StatRow label="Alimentos desativados" value={String(inactiveFoods)} />
+        <Link
+          href="/settings/foods"
+          className="mt-3 inline-block rounded-lg bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white"
+        >
+          Gerenciar alimentos
+        </Link>
+      </Card>
+
+      <Card title="Planos alimentares">
+        <StatRow label="Planos cadastrados" value={String(planCount)} />
+        <Link
+          href="/settings/plans"
+          className="mt-3 inline-block rounded-lg bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white"
+        >
+          Gerenciar planos
+        </Link>
       </Card>
 
       <Card title="Aviso">

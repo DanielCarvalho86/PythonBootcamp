@@ -1,16 +1,7 @@
 import { requireUserId } from "@/lib/auth";
 import { prisma } from "@/lib/database/prisma";
 import { Card, StatRow } from "@/components/dashboard/Card";
-
-const MEAL_TYPE_LABELS: Record<string, string> = {
-  breakfast: "Cafe da manha",
-  morning_snack: "Lanche da manha",
-  lunch: "Almoco",
-  afternoon_snack: "Lanche da tarde",
-  dinner: "Jantar",
-  supper: "Ceia",
-  other: "Shake / outro",
-};
+import { mealTypeLabel } from "@/lib/labels";
 
 export default async function PlanPage() {
   const userId = await requireUserId();
@@ -42,7 +33,7 @@ export default async function PlanPage() {
             {plan.meals.map((meal) => (
               <div key={meal.id}>
                 <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                  {MEAL_TYPE_LABELS[meal.mealType] ?? meal.name}
+                  {mealTypeLabel(meal.mealType)}
                   {meal.isProtectedComposition && <span className="ml-2 text-[10px] text-emerald-600">regra fixa</span>}
                 </h3>
                 <ul className="mt-1 flex flex-col gap-0.5 text-sm text-zinc-600">

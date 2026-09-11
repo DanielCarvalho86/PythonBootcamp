@@ -13,10 +13,18 @@ export const parsedFoodItemSchema = z.object({
   unit: z.enum(FOOD_UNITS),
 });
 
-export const parsedMealSchema = z.object({
-  mealType: z.enum(MEAL_TYPES),
-  items: z.array(parsedFoodItemSchema).min(1),
-});
+export const parsedMealSchema = z
+  .object({
+    mealType: z.enum(MEAL_TYPES),
+    items: z.array(parsedFoodItemSchema).default([]),
+    // Set when the user referenced the meal without detailing ingredients
+    // (e.g. "tomei meu shake") — the caller falls back to the active
+    // plan's current quantities for that slot.
+    usesPlanDefault: z.boolean().optional(),
+  })
+  .refine((meal) => meal.items.length > 0 || meal.usesPlanDefault === true, {
+    message: "A meal needs at least one item, or usesPlanDefault: true",
+  });
 
 export const parsedActivitySchema = z.object({
   activityType: z.enum(ACTIVITY_TYPES),

@@ -78,6 +78,10 @@ model Food {
   fiberPer100g      Float
   source            String @default("manual")
   verified          Boolean @default(false)
+  // Soft-delete: foods with existing MealEntry/PlanMealItem rows are never
+  // hard-deleted (spec: history must keep showing them) — the food editor
+  // just flips this to false so it drops out of new-entry search results.
+  active            Boolean @default(true)
   notes             String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
@@ -140,7 +144,11 @@ model PlanMeal {
   planId String
   plan   NutritionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
 
-  mealType String // breakfast | morning_snack | lunch | afternoon_snack | dinner | supper | other
+  // Unambiguous meal identifier. "shake" is its own slot — deliberately
+  // NOT reused for generic unclassified snacks (those default to "other")
+  // so a freeform "comi um lanche" message can never be mistaken for the
+  // shake having been consumed. See src/types/domain.ts MEAL_TYPES.
+  mealType String // breakfast | morning_snack | lunch | shake | afternoon_snack | dinner | supper | other
   name     String
   order    Int
 
@@ -148,6 +156,12 @@ model PlanMeal {
   // adjustment engine may resize items but must never remove the
   // mandatory categories (fruit, milk, whey, oats, nuts, creatine).
   isProtectedComposition Boolean @default(false)
+
+  // Explicit slot metadata the adjustment engine reads instead of
+  // inferring behavior from mealType alone.
+  isRequired   Boolean @default(true) // must be planned every day the plan is active
+  isConsumable Boolean @default(true) // can be logged as eaten (always true today; reserved for future non-food slots)
+  isAdjustable Boolean @default(true) // the least-change optimizer is allowed to resize this meal's items
 
   items PlanMealItem[]
 

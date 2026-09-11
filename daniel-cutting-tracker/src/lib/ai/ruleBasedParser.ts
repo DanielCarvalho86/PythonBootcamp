@@ -33,7 +33,9 @@ const MEAL_KEYWORDS: Record<string, MealType> = {
   almoco: "lunch",
   jantar: "dinner",
   ceia: "supper",
-  shake: "other",
+  // "shake" is its own slot, deliberately distinct from "other" — see
+  // MEAL_TYPES in src/types/domain.ts for why this matters.
+  shake: "shake",
 };
 
 const ACTIVITY_KEYWORDS: { pattern: RegExp; type: ActivityType }[] = [
@@ -121,7 +123,7 @@ function parseFoodItem(raw: string): ParsedFoodItem | null {
 function parseMealSegment(segment: string): { meal: ParsedMeal | null; unmatched: string[] } {
   const mealType = detectMealType(segment) ?? "other";
   // Strip leading meal-name phrases like "No almoço comi" / "Comi no café da manhã"
-  const withoutVerb = segment.replace(/^(hoje\s+)?(no|na)?\s*(cafe( da manha)?|almoco|jantar|lanche( da (manha|tarde))?|ceia)?\s*(,)?\s*(eu\s+)?(comi|tomei|almocei|jantei)\s*/i, "").trim();
+  const withoutVerb = segment.replace(/^(hoje\s+)?(no|na)?\s*(cafe( da manha)?|almoco|jantar|lanche( da (manha|tarde))?|ceia|(meu |o |um )?shake)?\s*(,)?\s*(eu\s+)?(comi|tomei|almocei|jantei|bebi)\s*/i, "").trim();
   const itemsText = withoutVerb.length > 0 ? withoutVerb : segment;
   const rawItems = splitFoodItems(itemsText);
   const items: ParsedFoodItem[] = [];
@@ -133,7 +135,14 @@ function parseMealSegment(segment: string): { meal: ParsedMeal | null; unmatched
     else if (raw.trim().length > 0) unmatched.push(raw.trim());
   }
 
-  if (items.length === 0) return { meal: null, unmatched };
+  if (items.length === 0) {
+    // "Tomei meu shake" / "Bebi o shake" — no ingredients spelled out, but
+    // the shake slot was unambiguously named. Fall back to whatever the
+    // active plan currently has for that slot (resolved downstream in
+    // processMessage.ts) instead of discarding the message.
+    if (mealType === "shake") return { meal: { mealType, items: [], usesPlanDefault: true }, unmatched: [] };
+    return { meal: null, unmatched };
+  }
   return { meal: { mealType, items }, unmatched };
 }
 
@@ -231,7 +240,7 @@ export function parseMessageRuleBased(message: string, options: RuleBasedParseOp
       continue;
     }
 
-    const hasFoodVerb = /(comi|tomei|almocei|jantei|cafe da manha|lanche)/i.test(n);
+    const hasFoodVerb = /(comi|tomei|almocei|jantei|bebi|shake|cafe da manha|lanche)/i.test(n);
     const hasQuantity = /\d/.test(segment);
     if (hasFoodVerb || (hasQuantity && /\bde\b/i.test(segment))) {
       const { meal, unmatched } = parseMealSegment(segment);

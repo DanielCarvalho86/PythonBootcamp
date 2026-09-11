@@ -22,16 +22,17 @@ function buildFutureMeals(): AdjustableMeal[] {
   return [
     {
       id: "shake",
-      mealType: "other",
+      mealType: "shake",
       name: "Shake",
       isProtectedComposition: true,
+      isAdjustable: true,
       items: [
-        { id: "whey", foodName: "Whey protein concentrado", facts: { caloriesPer100g: 400, proteinPer100g: 80, carbsPer100g: 8, fatPer100g: 5, fiberPer100g: 0 }, currentGrams: 40, minGrams: 30, maxGrams: 50, stepGrams: 5, role: "protein", isMandatory: true },
-        { id: "banana", foodName: "Banana congelada", facts: { caloriesPer100g: 98, proteinPer100g: 1.3, carbsPer100g: 26, fatPer100g: 0.1, fiberPer100g: 2 }, currentGrams: 100, minGrams: 50, maxGrams: 150, stepGrams: 10, role: "carb", isMandatory: true },
-        { id: "leite", foodName: "Leite desnatado", facts: { caloriesPer100g: 35, proteinPer100g: 3.4, carbsPer100g: 5, fatPer100g: 0.2, fiberPer100g: 0 }, currentGrams: 200, minGrams: 150, maxGrams: 250, stepGrams: 25, role: "fixed", isMandatory: true },
-        { id: "aveia", foodName: "Aveia em flocos", facts: { caloriesPer100g: 394, proteinPer100g: 13.9, carbsPer100g: 67, fatPer100g: 8.5, fiberPer100g: 9.1 }, currentGrams: 10, minGrams: 5, maxGrams: 20, stepGrams: 5, role: "carb", isMandatory: true },
-        { id: "castanha", foodName: "Castanha do para", facts: { caloriesPer100g: 656, proteinPer100g: 14.3, carbsPer100g: 12.3, fatPer100g: 66.4, fiberPer100g: 7.9 }, currentGrams: 5, minGrams: 3, maxGrams: 10, stepGrams: 1, role: "fat", isMandatory: true },
-        { id: "creatina", foodName: "Creatina monohidratada", facts: { caloriesPer100g: 0, proteinPer100g: 0, carbsPer100g: 0, fatPer100g: 0, fiberPer100g: 0 }, currentGrams: 5, minGrams: 5, maxGrams: 5, stepGrams: 0, role: "fixed", isMandatory: true },
+        { id: "whey", foodId: "food-whey", foodName: "Whey protein concentrado", facts: { caloriesPer100g: 400, proteinPer100g: 80, carbsPer100g: 8, fatPer100g: 5, fiberPer100g: 0 }, currentGrams: 40, minGrams: 30, maxGrams: 50, stepGrams: 5, role: "protein", isMandatory: true },
+        { id: "banana", foodId: "food-banana", foodName: "Banana congelada", facts: { caloriesPer100g: 98, proteinPer100g: 1.3, carbsPer100g: 26, fatPer100g: 0.1, fiberPer100g: 2 }, currentGrams: 100, minGrams: 50, maxGrams: 150, stepGrams: 10, role: "carb", isMandatory: true },
+        { id: "leite", foodId: "food-leite", foodName: "Leite desnatado", facts: { caloriesPer100g: 35, proteinPer100g: 3.4, carbsPer100g: 5, fatPer100g: 0.2, fiberPer100g: 0 }, currentGrams: 200, minGrams: 150, maxGrams: 250, stepGrams: 25, role: "fixed", isMandatory: true },
+        { id: "aveia", foodId: "food-aveia", foodName: "Aveia em flocos", facts: { caloriesPer100g: 394, proteinPer100g: 13.9, carbsPer100g: 67, fatPer100g: 8.5, fiberPer100g: 9.1 }, currentGrams: 10, minGrams: 5, maxGrams: 20, stepGrams: 5, role: "carb", isMandatory: true },
+        { id: "castanha", foodId: "food-castanha", foodName: "Castanha do para", facts: { caloriesPer100g: 656, proteinPer100g: 14.3, carbsPer100g: 12.3, fatPer100g: 66.4, fiberPer100g: 7.9 }, currentGrams: 5, minGrams: 3, maxGrams: 10, stepGrams: 1, role: "fat", isMandatory: true },
+        { id: "creatina", foodId: "food-creatina", foodName: "Creatina monohidratada", facts: { caloriesPer100g: 0, proteinPer100g: 0, carbsPer100g: 0, fatPer100g: 0, fiberPer100g: 0 }, currentGrams: 5, minGrams: 5, maxGrams: 5, stepGrams: 0, role: "fixed", isMandatory: true },
       ],
     },
     {
@@ -39,10 +40,11 @@ function buildFutureMeals(): AdjustableMeal[] {
       mealType: "dinner",
       name: "Jantar",
       isProtectedComposition: false,
+      isAdjustable: true,
       items: [
-        { id: "frango", foodName: "Frango peito grelhado", facts: { caloriesPer100g: 159, proteinPer100g: 32, carbsPer100g: 0, fatPer100g: 2.5, fiberPer100g: 0 }, currentGrams: 200, minGrams: 150, maxGrams: 300, stepGrams: 10, role: "protein", isMandatory: false },
-        { id: "cuscuz", foodName: "Cuscuz cozido", facts: { caloriesPer100g: 112, proteinPer100g: 2.5, carbsPer100g: 25, fatPer100g: 0.2, fiberPer100g: 1.5 }, currentGrams: 150, minGrams: 50, maxGrams: 250, stepGrams: 10, role: "carb", isMandatory: false },
-        { id: "azeite", foodName: "Azeite de oliva", facts: { caloriesPer100g: 884, proteinPer100g: 0, carbsPer100g: 0, fatPer100g: 100, fiberPer100g: 0 }, currentGrams: 5, minGrams: 0, maxGrams: 15, stepGrams: 5, role: "fat", isMandatory: false },
+        { id: "frango", foodId: "food-frango", foodName: "Frango peito grelhado", facts: { caloriesPer100g: 159, proteinPer100g: 32, carbsPer100g: 0, fatPer100g: 2.5, fiberPer100g: 0 }, currentGrams: 200, minGrams: 150, maxGrams: 300, stepGrams: 10, role: "protein", isMandatory: false },
+        { id: "cuscuz", foodId: "food-cuscuz", foodName: "Cuscuz cozido", facts: { caloriesPer100g: 112, proteinPer100g: 2.5, carbsPer100g: 25, fatPer100g: 0.2, fiberPer100g: 1.5 }, currentGrams: 150, minGrams: 50, maxGrams: 250, stepGrams: 10, role: "carb", isMandatory: false },
+        { id: "azeite", foodId: "food-azeite", foodName: "Azeite de oliva", facts: { caloriesPer100g: 884, proteinPer100g: 0, carbsPer100g: 0, fatPer100g: 100, fiberPer100g: 0 }, currentGrams: 5, minGrams: 0, maxGrams: 15, stepGrams: 5, role: "fat", isMandatory: false },
       ],
     },
   ];

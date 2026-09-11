@@ -6,6 +6,7 @@ import {
   DEFAULT_PROTEIN_INCREASE_PRIORITY,
   priorityScore,
 } from "@/lib/adjustment/priorities";
+import { validateShakeComposition } from "@/lib/adjustment/shakeRules";
 
 /**
  * The "least change" adjustment engine (spec sections 22-27, 42-43).
@@ -26,6 +27,7 @@ import {
 
 export interface AdjustableItem {
   id: string;
+  foodId: string;
   foodName: string;
   facts: FoodNutritionFacts;
   currentGrams: number;
@@ -41,6 +43,10 @@ export interface AdjustableMeal {
   mealType: MealType;
   name: string;
   isProtectedComposition: boolean;
+  // When false, this meal's nutrition still counts toward the day's
+  // future totals, but the optimizer will never touch its item quantities
+  // (e.g. a locked/manual meal slot). Defaults true for ordinary meals.
+  isAdjustable: boolean;
   items: AdjustableItem[];
 }
 
@@ -125,6 +131,7 @@ function eligibleCandidates(
 ): Candidate[] {
   const candidates: Candidate[] = [];
   for (const meal of meals) {
+    if (!meal.isAdjustable) continue;
     for (const item of meal.items) {
       if (item.role !== role) continue;
       if (direction === "increase" && item.currentGrams >= item.maxGrams) continue;
@@ -284,6 +291,20 @@ export function adjustRemainingMeals(input: {
       const verb = change.afterGrams > change.beforeGrams ? "aumentada" : "reduzida";
       reasons.push(
         `${change.foodName} em ${change.mealName}: ${verb} de ${change.beforeGrams}g para ${change.afterGrams}g.`,
+      );
+    }
+  }
+
+  // Defense-in-depth: the shake's mandatory components should structurally
+  // never be droppable (isMandatory + minGrams > 0 already guarantee it),
+  // but this check exists so a future bug in the stepping loop above shows
+  // up as a warning instead of silently shipping a broken shake.
+  for (const meal of meals) {
+    if (!meal.isProtectedComposition) continue;
+    const check = validateShakeComposition(meal);
+    if (!check.valid) {
+      warnings.push(
+        `Atencao: a composicao obrigatoria do shake (${meal.name}) esta incompleta — faltando: ${check.missingComponents.join(", ")}.`,
       );
     }
   }

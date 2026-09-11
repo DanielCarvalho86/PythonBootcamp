@@ -19,8 +19,9 @@ Responda APENAS com um JSON válido (sem markdown, sem comentários) no seguinte
 {
   "date": "YYYY-MM-DD",
   "meals": [
-    { "mealType": "breakfast|morning_snack|lunch|afternoon_snack|dinner|supper|other",
-      "items": [ { "food": "string", "quantity": number, "unit": "g|ml|unit|slice|tbsp|cup" } ] }
+    { "mealType": "breakfast|morning_snack|lunch|shake|afternoon_snack|dinner|supper|other",
+      "items": [ { "food": "string", "quantity": number, "unit": "g|ml|unit|slice|tbsp|cup" } ],
+      "usesPlanDefault": "boolean (true only when mealType is 'shake' AND the user did not list any ingredients, e.g. 'tomei meu shake' — then items must be [])" }
   ],
   "activities": [
     { "activityType": "steps|weight_training|swimming|walking|running|cycling|cardio|sports|other",
@@ -35,7 +36,9 @@ Responda APENAS com um JSON válido (sem markdown, sem comentários) no seguinte
 }
 
 Omita campos que não se aplicam à mensagem. Nunca invente quantidades ou alimentos que não foram mencionados.
-Se uma quantidade não for clara (ex: "comi um sanduíche" sem detalhes), coloque o item mesmo assim com sua melhor estimativa de "unit" e explique em needsClarification.`;
+Se uma quantidade não for clara (ex: "comi um sanduíche" sem detalhes), coloque o item mesmo assim com sua melhor estimativa de "unit" e explique em needsClarification.
+
+IMPORTANTE: "shake" é um mealType PRÓPRIO, nunca use "afternoon_snack" ou "other" quando a pessoa mencionar explicitamente o shake. Um lanche genérico (ex: "comi um lanche") NUNCA deve ser classificado como "shake" — isso marcaria incorretamente o shake do dia como consumido.`;
 
 let client: Anthropic | null = null;
 function getClient(): Anthropic {

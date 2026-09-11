@@ -5,6 +5,12 @@ import { calculateFoodNutrition, convertToGrams } from "@/lib/nutrition/engine";
 import { estimateStepsCalories } from "@/lib/activities/engine";
 import { recalculateDay, type RecalculateDayResult } from "@/lib/services/recalculateDay";
 import { toDateOnly, todayDateOnlyString } from "@/lib/services/dateOnly";
+import {
+  buildFutureAdjustableMeals,
+  getActivePlanForDate,
+  getConsumedMealTypesForDate,
+  getLatestAdjustmentForDate,
+} from "@/lib/services/dayPlan";
 import type { FoodUnit, ParsedMessage } from "@/types/domain";
 
 export interface ProcessMessageResult {
@@ -35,12 +41,63 @@ export async function processUserMessage(
   const parsed: ParsedMessage = await parseUserMessage(message, today);
   const date = toDateOnly(parsed.date || today);
 
-  const foods = await prisma.food.findMany();
+  // Only active foods are offered for NEW matches — a deactivated food
+  // stays attached to its historical MealEntry rows (foreign key, never
+  // touched here) but shouldn't be silently re-logged going forward.
+  const foods = await prisma.food.findMany({ where: { active: true } });
 
   const createdMealEntryIds: string[] = [];
   const unresolvedFoodItems: string[] = [];
 
   for (const meal of parsed.meals) {
+    if (meal.usesPlanDefault && meal.items.length === 0) {
+      // "Tomei meu shake" — no ingredients spelled out. Register the
+      // active plan's CURRENT quantities for this slot (already-adjusted
+      // for today, if an earlier meal triggered a resize) rather than
+      // asking the user to retype the whole recipe every time. Per the
+      // shake's permanent-rule composition, this never invents a
+      // different shake — it just consumes exactly what was planned.
+      const plan = await getActivePlanForDate(userId, date);
+      if (!plan) {
+        unresolvedFoodItems.push(`${meal.mealType} (sem plano ativo para resolver a composicao padrao)`);
+        continue;
+      }
+      const consumedMealTypes = await getConsumedMealTypesForDate(userId, date);
+      const latestAdjustment = await getLatestAdjustmentForDate(userId, date);
+      const futureMeals = await buildFutureAdjustableMeals(plan.id, consumedMealTypes, latestAdjustment);
+      const planMeal = futureMeals.find((m) => m.mealType === meal.mealType);
+
+      if (!planMeal) {
+        unresolvedFoodItems.push(`${meal.mealType} (ja consumido ou nao cadastrado no plano de hoje)`);
+        continue;
+      }
+
+      for (const item of planMeal.items) {
+        const nutrition = calculateFoodNutrition(item.currentGrams, item.facts);
+        const entry = await prisma.mealEntry.create({
+          data: {
+            userId,
+            date,
+            mealType: meal.mealType,
+            foodId: item.foodId,
+            quantity: item.currentGrams,
+            unit: "g",
+            grams: item.currentGrams,
+            calories: nutrition.calories,
+            protein: nutrition.protein,
+            carbs: nutrition.carbs,
+            fat: nutrition.fat,
+            fiber: nutrition.fiber,
+            source: "plan",
+            isEstimated: false,
+            notes: "Composicao padrao do plano para este horario.",
+          },
+        });
+        createdMealEntryIds.push(entry.id);
+      }
+      continue;
+    }
+
     for (const item of meal.items) {
       const match = matchFood(item.food, foods);
 

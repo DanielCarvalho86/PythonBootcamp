@@ -2,10 +2,14 @@
 // Kept as plain string unions (rather than Prisma enums) so the same types
 // work for both the SQLite dev/test datasource and a future Postgres one.
 
+// "shake" is its own explicit slot — never conflated with "afternoon_snack"
+// or "other" — so a freeform, unclassified snack can never be mistaken for
+// Daniel's shake having been consumed (see PlanMeal.mealType in schema.prisma).
 export const MEAL_TYPES = [
   "breakfast",
   "morning_snack",
   "lunch",
+  "shake",
   "afternoon_snack",
   "dinner",
   "supper",
@@ -84,6 +88,11 @@ export interface ParsedFoodItem {
 export interface ParsedMeal {
   mealType: MealType;
   items: ParsedFoodItem[];
+  // Set when the user referred to the meal without detailing ingredients
+  // (e.g. "tomei meu shake") — the caller should fall back to the active
+  // plan's current quantities for that slot instead of failing to parse.
+  // Only meaningful when items is empty.
+  usesPlanDefault?: boolean;
 }
 
 export interface ParsedActivity {

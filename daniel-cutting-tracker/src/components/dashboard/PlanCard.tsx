@@ -2,16 +2,7 @@ import { Card } from "@/components/dashboard/Card";
 import { MealEntryRow, type MealEntryRowData } from "@/components/meals/MealEntryRow";
 import { calculateMealNutrition } from "@/lib/nutrition/engine";
 import type { AdjustableMeal } from "@/lib/adjustment/engine";
-
-const MEAL_TYPE_LABELS: Record<string, string> = {
-  breakfast: "Cafe da manha",
-  morning_snack: "Lanche da manha",
-  lunch: "Almoco",
-  afternoon_snack: "Lanche da tarde",
-  dinner: "Jantar",
-  supper: "Ceia",
-  other: "Shake / outro",
-};
+import { mealTypeLabel } from "@/lib/labels";
 
 export interface ConsumedEntry {
   id: string;
@@ -50,7 +41,7 @@ export function PlanCard({
             <div key={planMeal.id}>
               <div className="mb-1 flex items-center justify-between">
                 <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                  {MEAL_TYPE_LABELS[planMeal.mealType] ?? planMeal.name}
+                  {mealTypeLabel(planMeal.mealType)}
                 </h3>
                 <span className={`text-[10px] font-medium ${consumed ? "text-emerald-600" : "text-zinc-400"}`}>
                   {consumed ? "Consumido" : "Planejado (ajustado)"}
