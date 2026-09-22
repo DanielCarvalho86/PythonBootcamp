@@ -20,6 +20,9 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Analisar ofertas
+        env:
+          CALLMEBOT_PHONE: ${{ secrets.CALLMEBOT_PHONE }}
+          CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
         run: python -m price_monitor.analysis.generate_alerts
 
       - name: Commitar banco atualizado

@@ -24,13 +24,11 @@ jobs:
       - name: Coletar preços
         run: python -m price_monitor.collectors.collect_prices
 
-      - name: Analisar ofertas e gerar alertas
+      - name: Analisar ofertas e enviar alertas via WhatsApp
+        env:
+          CALLMEBOT_PHONE: ${{ secrets.CALLMEBOT_PHONE }}
+          CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
         run: python -m price_monitor.analysis.generate_alerts
-
-      # TODO: quando a credencial de WhatsApp estiver funcionando (CallMeBot
-      # ou outro provedor), adicionar aqui o passo que efetivamente envia as
-      # mensagens dos alertas gerados. Por enquanto o script acima só
-      # calcula, decide e grava em alerts_sent - não envia nada de verdade.
 
       - name: Commitar banco atualizado
         run: |

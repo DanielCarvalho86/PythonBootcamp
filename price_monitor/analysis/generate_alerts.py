@@ -1,13 +1,11 @@
 """Analisa todos os listings ativos: calcula histórico, Offer Score, e
-decide se algum merece alerta. Registra os alertas gerados em
-alerts_sent (para deduplicação futura) e imprime a mensagem formatada.
-
-Neste momento NÃO envia WhatsApp de verdade - isso é responsabilidade
-do módulo de notificações (ainda pendente de credencial funcionando).
-Este script é o "cérebro" que decide O QUE alertar; o envio é uma
-etapa separada e deliberadamente desacoplada.
+decide se algum merece alerta. Quando um alerta é aprovado, envia a
+mensagem via WhatsApp (CallMeBot) e só então registra em alerts_sent -
+se o envio falhar, NÃO registra, para tentar de novo na próxima
+execução em vez de perder a oportunidade silenciosamente.
 """
 import sqlite3
+import time
 from pathlib import Path
 
 import yaml
@@ -16,7 +14,10 @@ from price_monitor.analysis.alert_rules import should_alert, record_alert
 from price_monitor.analysis.offer_score import compute_offer_score, classify
 from price_monitor.analysis.stats import get_price_stats
 from price_monitor.db.init_db import DB_PATH
+from price_monitor.notifications.callmebot import send_whatsapp_message
 from price_monitor.notifications.format_alert import format_alert_message
+
+SEND_DELAY_SECONDS = 5  # educado com o rate limit do CallMeBot entre mensagens
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 PRODUCTS_YAML = BASE_DIR / "catalog" / "products.yaml"
@@ -103,7 +104,6 @@ def main() -> None:
         print(f"  decisão de alerta: {'SIM' if allow else 'não'} ({reason})")
 
         if allow:
-            record_alert(conn, listing["id"], stats["current"], score, reason)
             message = format_alert_message(
                 product_name=product["canonical_name"],
                 voltage=product.get("voltage"),
@@ -116,9 +116,16 @@ def main() -> None:
                 url=listing["url"],
                 main_reason=reasons[0] if reasons else reason,
             )
-            print("  --- mensagem que seria enviada ---")
-            print(message)
-            alerts_generated += 1
+            try:
+                send_whatsapp_message(message)
+            except Exception as exc:
+                print(f"  FALHA ao enviar WhatsApp: {exc} - não registrando, tenta de novo na próxima execução")
+            else:
+                record_alert(conn, listing["id"], stats["current"], score, reason)
+                print("  --- mensagem enviada via WhatsApp ---")
+                print(message)
+                alerts_generated += 1
+                time.sleep(SEND_DELAY_SECONDS)
 
     conn.commit()
     conn.close()
