@@ -1,0 +1,219 @@
+[
+ {
+  "turn": 1,
+  "speaker": "SOFIA",
+  "text": "Hi, Leo! Are you ready for Madrid?",
+  "start": 0.5,
+  "end": 3.29
+ },
+ {
+  "turn": 2,
+  "speaker": "LEO",
+  "text": "Hi, Sofia!",
+  "start": 3.84,
+  "end": 4.93
+ },
+ {
+  "turn": 2,
+  "speaker": "LEO",
+  "text": "I'm packing now.",
+  "start": 5.15,
+  "end": 6.4
+ },
+ {
+  "turn": 2,
+  "speaker": "LEO",
+  "text": "I'm going to Madrid for four days.",
+  "start": 6.62,
+  "end": 8.85
+ },
+ {
+  "turn": 3,
+  "speaker": "SOFIA",
+  "text": "Great! What are you taking?",
+  "start": 9.4,
+  "end": 11.75
+ },
+ {
+  "turn": 4,
+  "speaker": "LEO",
+  "text": "T-shirts, shorts and sunglasses.",
+  "start": 12.3,
+  "end": 14.76
+ },
+ {
+  "turn": 4,
+  "speaker": "LEO",
+  "text": "It's hot, right?",
+  "start": 14.98,
+  "end": 16.08
+ },
+ {
+  "turn": 5,
+  "speaker": "SOFIA",
+  "text": "It's sunny in the day.",
+  "start": 16.63,
+  "end": 18.02
+ },
+ {
+  "turn": 5,
+  "speaker": "SOFIA",
+  "text": "But this week it's cold at night.",
+  "start": 18.24,
+  "end": 20.14
+ },
+ {
+  "turn": 6,
+  "speaker": "LEO",
+  "text": "Really?",
+  "start": 20.69,
+  "end": 21.43
+ },
+ {
+  "turn": 6,
+  "speaker": "LEO",
+  "text": "OK.",
+  "start": 21.65,
+  "end": 22.54
+ },
+ {
+  "turn": 6,
+  "speaker": "LEO",
+  "text": "I'm not taking shorts.",
+  "start": 22.76,
+  "end": 24.14
+ },
+ {
+  "turn": 6,
+  "speaker": "LEO",
+  "text": "I'm taking trousers and a jacket.",
+  "start": 24.36,
+  "end": 26.43
+ },
+ {
+  "turn": 7,
+  "speaker": "SOFIA",
+  "text": "Good idea.",
+  "start": 26.98,
+  "end": 28.11
+ },
+ {
+  "turn": 7,
+  "speaker": "SOFIA",
+  "text": "And we're going to walk a lot.",
+  "start": 28.33,
+  "end": 30.05
+ },
+ {
+  "turn": 8,
+  "speaker": "LEO",
+  "text": "OK, I need good shoes.",
+  "start": 30.6,
+  "end": 32.24
+ },
+ {
+  "turn": 8,
+  "speaker": "LEO",
+  "text": "Do I need an umbrella?",
+  "start": 32.46,
+  "end": 33.83
+ },
+ {
+  "turn": 9,
+  "speaker": "SOFIA",
+  "text": "No, you don't.",
+  "start": 34.38,
+  "end": 35.61
+ },
+ {
+  "turn": 9,
+  "speaker": "SOFIA",
+  "text": "It's not rainy this week.",
+  "start": 35.83,
+  "end": 37.53
+ },
+ {
+  "turn": 10,
+  "speaker": "LEO",
+  "text": "Great.",
+  "start": 38.08,
+  "end": 38.86
+ },
+ {
+  "turn": 10,
+  "speaker": "LEO",
+  "text": "I'm not taking an umbrella.",
+  "start": 39.08,
+  "end": 40.54
+ },
+ {
+  "turn": 11,
+  "speaker": "SOFIA",
+  "text": "And on Sunday, we're going to swim.",
+  "start": 41.09,
+  "end": 43.23
+ },
+ {
+  "turn": 11,
+  "speaker": "SOFIA",
+  "text": "There's a pool near my house.",
+  "start": 43.45,
+  "end": 45.21
+ },
+ {
+  "turn": 12,
+  "speaker": "LEO",
+  "text": "A pool!",
+  "start": 45.76,
+  "end": 46.65
+ },
+ {
+  "turn": 12,
+  "speaker": "LEO",
+  "text": "OK.",
+  "start": 46.87,
+  "end": 47.74
+ },
+ {
+  "turn": 12,
+  "speaker": "LEO",
+  "text": "I'm taking a swimsuit.",
+  "start": 47.96,
+  "end": 49.33
+ },
+ {
+  "turn": 13,
+  "speaker": "SOFIA",
+  "text": "And sunscreen!",
+  "start": 49.88,
+  "end": 51.19
+ },
+ {
+  "turn": 14,
+  "speaker": "LEO",
+  "text": "Yes.",
+  "start": 51.74,
+  "end": 52.55
+ },
+ {
+  "turn": 14,
+  "speaker": "LEO",
+  "text": "I need sunscreen.",
+  "start": 52.77,
+  "end": 54.08
+ },
+ {
+  "turn": 14,
+  "speaker": "LEO",
+  "text": "And my passport!",
+  "start": 54.3,
+  "end": 55.56
+ },
+ {
+  "turn": 14,
+  "speaker": "LEO",
+  "text": "See you on Friday!",
+  "start": 55.78,
+  "end": 57.13
+ }
+]
