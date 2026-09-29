@@ -137,7 +137,7 @@ tx(s,'Yes, he does.  /  No, he doesn’t.',bx+0.5,5.95,12.55-(bx+0.5),0.4,{fontS
 // 09 RIGHT OR WRONG
 s=slide({kicker:'05 · CHALLENGE',notes:`STAGE 5 · Quick accuracy challenge · 5 min · T↔S
 "Right or wrong? Fix the wrong ones." The student says the correct sentence aloud — no writing needed.
-KEY: 1 ✗ He works in a clinic. · 2 ✗ I work from Monday to Friday. · 3 ✓ · 4 ✗ Does he work on Saturdays? · 5 ✓
+KEY: 1 ✗ He works in a clinic. · 2 ✗ I work from Monday to Friday. · 3 ✓ She doesn't work on Fridays. · 4 ✗ Does he work on Saturdays? · 5 ✓ Do you work at a hospital?
 If the student is unsure, point back to slide 8 (don't re-explain).`});
 title(s,'Right or wrong?');
 tx(s,'Fix the wrong ones.',0.6,1.7,8,0.45,{fontSize:22,color:INK});
