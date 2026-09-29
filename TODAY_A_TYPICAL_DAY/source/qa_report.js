@@ -1,0 +1,52 @@
+const {chromium}=require('playwright-core');const fs=require('fs');
+const O=process.argv[2];
+const logo='data:image/png;base64,'+fs.readFileSync('/tmp/td/logo_primary_navy_crop.png').toString('base64');
+const qa=fs.readFileSync('/tmp/td/qa11_out.txt','utf8');const pass=(qa.match(/^PASS/gm)||[]).length,fail=(qa.match(/^FAIL/gm)||[]).length,hits=(qa.match(/^\('/gm)||[]).length;
+const rows=(a)=>a.map(([x,y])=>`<tr><td>${x}</td><td>${y}</td></tr>`).join('');
+const html=`<!doctype html><html><head><meta charset="utf-8"><style>
+@page{size:A4;margin:14mm 15mm 16mm;background:#FAF7F2;@bottom-left{content:'TODAY · A TYPICAL DAY · REV1.1 QA REPORT';font-family:'JetBrains Mono Medium';font-size:7pt;letter-spacing:.14em;color:#5B6088}@bottom-right{content:counter(page) ' / ' counter(pages);font-family:'JetBrains Mono Medium';font-size:7pt;color:#5B6088}}
+html,body{background:#FAF7F2;color:#0B1440;font-family:'Hanken Grotesk';-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.k{font-family:'JetBrains Mono Medium';font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#5B6088}.o{color:#F44904}
+h1{font-family:'Poppins ExtraBold';font-size:26pt;margin:2mm 0 1mm}h2{font-family:Poppins;font-weight:700;font-size:12pt;margin:6mm 0 2mm;break-after:avoid}
+p,li{font-size:9.2pt;line-height:1.42}ul{padding-left:4.5mm;margin:0}li{margin:.6mm 0}
+table{border-collapse:collapse;width:100%}td,th{text-align:left;vertical-align:top;padding:1.6mm 2mm;border-bottom:.6pt solid #DDD6C7;font-size:8.7pt;line-height:1.35}
+th{background:#0B1440;color:#FAF7F2;font-family:'JetBrains Mono Medium';font-weight:400;font-size:7pt;letter-spacing:.1em;text-transform:uppercase}tr{break-inside:avoid}
+td:first-child{width:34%;font-weight:600}.card{background:#F3EFE6;border-radius:3mm;padding:3.5mm 4.5mm;margin-top:3mm;break-inside:avoid}
+.ok{color:#0B1440;font-weight:700}.top{display:flex;justify-content:space-between}
+</style></head><body>
+<div class="top"><div><div class="k"><span class="o">—</span> Revision 1.1 · Quality assurance</div><h1>A Typical Day</h1><div style="font-family:'Poppins SemiBold';font-size:11pt;color:#5B6088">Habits, routines &amp; everyday life · A1/A1+ · 60 minutes · 1-to-1</div></div><img src="${logo}" style="height:15mm"></div>
+<div class="card"><p><b>Files checked:</b> 01_Today_A_Typical_Day_Student_REV1.1.pptx (17 slides) · 02_Today_A_Typical_Day_Student_REV1.1.pdf (6 pages) · 03_Today_A_Typical_Day_Teacher_Lesson_Plan_REV1.1.pdf (5 pages). The REV1.0 files are kept separately in <i>archive/REV1.0</i>.</p></div>
+<h2>1 · What was changed, and why</h2>
+<table><tr><th>Change</th><th>Why</th></tr>${rows([
+['Dr. Lucas removed; Dr. Sarah is the central doctor (A Doctor’s Day, What does she do?, Who is it?, Ask the questions)','Cuts the number of characters from three to two and gives the lesson one continuous story.'],
+['Stage 3 timeline now belongs to Dr. Sarah, word for word as specified (7:00 gets up … 6:00 finishes work)','Same Look. Guess. Say it. sequence; no new vocabulary.'],
+['Stage 6 facts replaced with six NEW facts not visible on the timeline (15 patients a day · not on Sundays · not at night · appointments in the afternoon · watches TV after work · bed at 11:00). Question frames use your wording.','The original Stage 6 facts (hospital, 7:30, 12:30, 5:00) contradicted her Stage 3 day and were largely already visible. Resolved with you mid-revision; this keeps a genuine information gap.'],
+['Dr. Ben kept as the only secondary character, labelled “Dr. Sarah’s colleague”, used only in Stage 8 Round 1; teacher-only facts exactly as specified','A meaningful relationship instead of an unrelated third person.'],
+['Stage 7 USE prompt: “Tell me about a colleague.” (+ optional prompts in the notes)','Keeps the practice in a working-life context with 3rd-person -s.'],
+['Stage 8 notes and plan: SUPPORTED → PERSONALISED → INDEPENDENT; Round 2 = choose 3–4 questions + natural follow-ups (with examples); Round 3 = 2–3 minutes of extended speaking','Makes Round 2 a conversation rather than a questionnaire; no new grammar.'],
+['Stage 9 notes and plan: BEFORE SHOWING — use real errors; one at a time; “Is it right? Can you fix it?”; never more than one target error per sentence','Makes the delayed-correction procedure unambiguous.'],
+['Stage 10: exit task described as a short 4–5 sentence check, distinct from Round 3; “next time” teaser reduced to one small line, “Do not teach this now.”','The exit task now clearly measures the main aim; the preview can’t be mistaken for lesson content.'],
+['Teacher plan, Stage 5: the wrong note (“accepting 4 as right”) replaced with “If the student accepts sentence 4 as correct, point back to DOES + HE + WORK and elicit the correction.” Key: 1 wrong · 2 wrong · 3 right · 4 wrong · 5 right','Removes a factual error.'],
+['Student PDF p5: every blank is an explicit line (I see about ___ patients a day. / I don’t ___ on weekends. / He / She ___ every day. / He / She doesn’t ___.)','Incomplete sentences no longer look like English mistakes.'],
+['Student PDF p6: explicit blanks in all five items; answer key moved to a separate dashed-line block (“check after you finish”)','Clear task, clearly separated key.'],
+['Student PDF p4: note areas labelled “My notes during the lesson”; the Dr. Ben card says “Dr. Sarah’s colleague”','Makes their purpose explicit, so they don’t read as grammar exercises.'],
+['Student PDF p1–2: example sentences that hinted at Stage 6 or Round 1 answers were changed (lunch at 12:30 → 1:00; bed at 11:00 → 10:30; appointments in the afternoon → morning; “She works at a hospital” → “My colleague works at a hospital”)','Prevents the student materials from leaking information-gap answers.'],
+['Slide 5 question cards: 17 pt → 16 pt; slide 17 teaser in the muted brand tone','Removes one line wrap; keeps the teaser small but legible.']])}</table>
+<h2>2 · What was intentionally preserved</h2>
+<p>17-slide structure · 10-stage progression · 55-minute core timing + about 5 minutes of flexibility · main aim · guided discovery (slides 7–8) · Right or Wrong items · information-gap mechanics (answer only what is asked; facts never on screen) · pronunciation NOTICE → LISTEN → REPEAT → USE with works /s/ · lives /z/ · watches /iz/ · Doctor vs. Doctor questions on screen · delayed correction · exit prompt and checklist · error log · teacher-only appendices · visual identity, typography, palette, icon style and timeline visuals. No grammar, stages, activities or vocabulary were added.</p>
+<h2>3 · Checks performed</h2>
+<table><tr><th>Check</th><th>Result</th></tr>${rows([
+['Cross-file consistency (scripted, '+(pass+fail)+' checks across the PPTX slides and notes, the student PDF and the teacher PDF)',`<span class="ok">${pass} passed · ${fail} failed</span>. Covered: character names (no “Lucas” anywhere); Ben only on slides 13–14; Stage 3 timeline identical in all three files; Sarah and Ben teacher-only facts identical in notes and plan; no old Stage 6 facts anywhere; answer keys; stage timings (4·5·7·7·5·7·3·10·5·2 = 55); slide count; pronunciation prompt; Round 2 / Stage 9 / exit / teaser instructions.`],
+['Answer leakage','Scripted search for all Sarah and Ben teacher-only facts in the student slides and student PDF: none found. One known overlap is kept: approved Right or Wrong sentence 3, “She doesn’t work at night.”, is a generic sentence that happens to match one Sarah fact (see limitations).'],
+['Language QA (scripted + manual)',`Pattern search for missing 3rd-person -s, an auxiliary + -s verb, I/you + -s, “I am + verb” and “he/she don’t” across all three files: ${hits} hits, each checked by hand. All are the lesson’s deliberate error examples (slides 8, 9 and 16, plus the plan), question frames with a “does” gap, or “Does he/she work?”. No unintended errors. Spelling, punctuation, capitalisation and typographic apostrophes were reviewed in the renders.`],
+['Visual / production QA','All 17 slides and all 11 PDF pages were rendered (LibreOffice for the PPTX, Chromium for the PDFs) and inspected: no overflow, clipping, missing characters or duplicate text. The PPTX passed OOXML validation. No shape outside the 0.55 in safe margin. Colours are limited to the library palette (#0B1440 #141E52 #F44904 #FAF7F2 #F3EFE6 #5B6088 #DDD6C7 #B7AFA0). Fonts are limited to Poppins, Hanken Grotesk and JetBrains Mono (no fallback fonts in either PDF).'],
+['Pedagogical QA (review against section 25)','Student talking time is dominant (teacher talk only in elicitation and short feedback) · grammar discovered, not lectured · controlled (stage 5) before freer (stage 8) · both information gaps are genuine · answers never on screen · correction concentrated in stages 5 and 9 · real errors used in stage 9 · the exit task measures the main aim · 55 + 5 minutes · no grammar added.']])}</table>
+<h2>4 · Remaining limitations</h2>
+<ul><li><b>No photography.</b> No photo source was reachable from the production environment, and the brand forbids AI-generated people; the doctors use the approved monogram and timeline system. A real editorial photo can be added to slide 1 or 4 without layout changes.</li>
+<li><b>Official logo</b> is the library’s 200 px JPEG with its background made transparent (not redrawn). Replace it with a high-resolution master when one is available.</li>
+<li><b>Fonts are not embedded in the PPTX.</b> Install Poppins, Hanken Grotesk and JetBrains Mono on the presenting machine.</li>
+<li><b>Slide 16</b> needs the teacher to type the student’s real errors during the lesson (the backup examples are pre-filled).</li>
+<li><b>Right or Wrong sentence 3</b> (“She doesn’t work at night.”, approved content) is generic but coincides with one Stage 6 fact about Dr. Sarah. It was kept because the brief says to preserve the items. If you prefer, it can be changed to e.g. “He doesn’t work on Fridays.” without affecting anything else.</li>
+<li>Rendering was verified in LibreOffice and Chromium, not in Microsoft PowerPoint itself.</li></ul>
+</body></html>`;
+(async()=>{fs.writeFileSync('/tmp/td/qa_report.html',html);const br=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'});const pg=await br.newPage();await pg.goto('file:///tmp/td/qa_report.html');await pg.evaluate(()=>document.fonts.ready);await pg.pdf({path:O+'/04_Today_A_Typical_Day_REV1.1_QA_Report.pdf',preferCSSPageSize:true,printBackground:true});await br.close();console.log('ok');})();

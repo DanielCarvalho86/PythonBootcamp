@@ -32,9 +32,9 @@ function idCard(s,who,x,y,{sz=1.1,dark=false,label:lb='DOCTOR'}={}){
  tx(s,who.name,x+sz+0.25,y+sz*0.12,Math.min(4,12.73-(x+sz+0.25)),0.55,{fontFace:T,bold:true,fontSize:sz*20,color:dark?PAPER:NAVY});
  tx(s,lb,x+sz+0.25,y+sz*0.12+sz*0.42,Math.min(4,12.73-(x+sz+0.25)),0.3,{fontFace:M,fontSize:10,color:dark?MUTED:INK,charSpacing:1.5});}
 function steps(s,arr,active,x,y,dark){const r=[];arr.forEach((t,i)=>{r.push({text:t,options:{color:i===active?OR:(dark?MUTED:INK)}});if(i<arr.length-1)r.push({text:'  →  ',options:{color:dark?MUTED:LINE}});});tx(s,r,x,y,11,0.35,{fontFace:M,fontSize:12,charSpacing:1.5});}
-// timeline of Dr Lucas
+// timeline of Dr Sarah (Stage 3)
 function timeline(s,withText){const x0=0.6,w=12.13,y=3.35;line(s,x0,y,w,0,LINE,1.25);
- D.LUCAS.day.forEach(([t,ic,ph],i)=>{const cx=x0+0.62+i*(w-1.24)/7;line(s,cx,y-0.12,0,0.24,NAVY,1.25);
+ D.SARAH.day.forEach(([t,ic,ph],i)=>{const cx=x0+0.62+i*(w-1.24)/7;line(s,cx,y-0.12,0,0.24,NAVY,1.25);
   tx(s,t,cx-0.6,y-0.62,1.2,0.35,{fontFace:M,fontSize:14,color:i%2?NAVY:NAVY,align:'center'});
   icon(s,ic,cx-0.5,y+0.35,1.0);
   if(withText)tx(s,ph,cx-0.66,y+1.5,1.32,0.8,{fontSize:15,bold:true,align:'center'});});}
@@ -74,23 +74,24 @@ label(s,'IF YOU NEED HELP',0.6,4.75,4);
 
 // 04 A DOCTOR'S DAY (no text)
 s=slide({kicker:'03 · A DOCTOR’S DAY',notes:`STAGE 3 · Vocabulary discovery · 7 min (slides 4–6) · T↔S
-Slide 4 (about 2 min): times and pictures only. ELICIT: "What does he do at 7:00?" Accept any form; don't correct yet.
-Expected: He gets up / He arrives at the clinic / He sees patients / He examines a patient / He has lunch / He sees patients / He checks medical records / He finishes work.
+This is Dr. Sarah — our doctor for the whole lesson.
+Slide 4 (about 2 min): times and pictures only. LOOK. GUESS. SAY IT. ELICIT: "What does she do at 7:00?" Accept any form; don't correct yet.
+Expected: She gets up / She arrives at the clinic / She sees patients / She examines a patient / She has lunch / She sees patients / She checks medical records / She finishes work.
 Feed missing words ("medical records", "examine") only if the student can't find them.`});
-title(s,'A Doctor’s Day');idCard(s,D.LUCAS,8.63,0.8,{sz:0.95});
-tx(s,'What does he do at 7:00?',0.6,1.7,7,0.5,{fontFace:ED,fontSize:22,color:INK});
+title(s,'A Doctor’s Day');idCard(s,D.SARAH,8.63,0.8,{sz:0.95});
+tx(s,'What does she do at 7:00?',0.6,1.7,7,0.5,{fontFace:ED,fontSize:22,color:INK});
 timeline(s,false);
 tx(s,'Look. Guess. Say it.',0.6,5.9,8,0.4,{fontFace:M,fontSize:11,color:INK,charSpacing:1.5});
 
 // 05 WHAT DOES HE DO?
 s=slide({kicker:'03 · A DOCTOR’S DAY',notes:`STAGE 3 · continued (about 3 min)
-Reveal the phrases. Student reads the day as a story: "At 7:00 he gets up. At 8:00 he arrives at the clinic…"
+Reveal the phrases. The student retells Dr. Sarah's day as a story: "At 7:00 she gets up. At 8:00 she arrives at the clinic…"
 Then ask the three questions.
-ANSWERS: He sees patients. · No, he doesn't. He works at a clinic. · He finishes at 6:00.
-If the student says "he see / he finish", don't correct yet — note it.`});
-title(s,'What does he do?');idCard(s,D.LUCAS,8.63,0.8,{sz:0.95});
+ANSWERS: She sees patients. · No, she doesn't. She works at a clinic. · She finishes at 6:00.
+If the student says "she see / she finish", don't correct yet — note it in the error log.`});
+title(s,'What does she do?');idCard(s,D.SARAH,8.63,0.8,{sz:0.95});
 timeline(s,true);
-[['What does he do at 8:30?'],['Does he work at a hospital?'],['What time does he finish?']].forEach(([q],i)=>{const x=0.6+i*4.1;rr(s,x,5.75,3.85,0.85);tx(s,q,x+0.3,5.75,3.4,0.85,{fontFace:ED,fontSize:17,valign:'middle'});});
+[['What does she do at 8:30?'],['Does she work at a hospital?'],['What time does she finish?']].forEach(([q],i)=>{const x=0.6+i*4.1;rr(s,x,5.75,3.85,0.85);tx(s,q,x+0.25,5.75,3.45,0.85,{fontFace:ED,fontSize:16,valign:'middle'});});
 
 // 06 WHAT DO YOU DO?
 s=slide({kicker:'03 · YOU',notes:`STAGE 3 · Personalisation (about 2 min) · T↔S
@@ -145,54 +146,58 @@ D.RW.forEach(([t],i)=>{const y=2.4+i*0.82;tx(s,String(i+1),0.6,y,0.5,0.6,{fontFa
 
 // 10 WHO IS IT?
 s=slide({kicker:'06 · INFORMATION GAP',notes:`STAGE 6 · Information gap · 7 min (slides 10–11) · S↔T
-"This is Dr. Sarah. You don't know her day. I know. Ask me — find the six things."
-Answer ONLY what the student asks. If the question is wrong ("Where she works?"), look puzzled and wait — let them self-correct. Reformulate only if they're stuck.
-TEACHER ONLY — Dr. Sarah: works in a hospital · starts at 7:30 · sees 15 patients a day · doesn't work on Sundays · has lunch at 12:30 · finishes at 5:00.`});
+"You know Dr. Sarah's day at the clinic. There are six more things you don't know. I know. Ask me."
+Answer ONLY the information requested. If the question is wrong ("How many patients she sees?"), don't answer: look puzzled, pause, elicit ("Again?") and let the student self-correct. Reformulate only if they're stuck.
+TEACHER ONLY — do not show: sees 15 patients a day · doesn't work on Sundays · doesn't work at night · has appointments in the afternoon · watches TV after work · goes to bed at 11:00.`});
 title(s,'Who is it?');idCard(s,D.SARAH,0.6,1.85,{sz:1.4});
-tx(s,'You don’t know her day.',0.6,3.6,5,0.5,{fontFace:ED,fontSize:24});tx(s,'Ask me. Find six things.',0.6,4.1,5,0.5,{fontSize:22,color:INK});
+tx(s,'Six things you don’t know.',0.6,3.6,5,0.5,{fontFace:ED,fontSize:24});tx(s,'Ask me. Find them.',0.6,4.1,5,0.5,{fontSize:22,color:INK});
 D.SARAH.facts.forEach(([k],i)=>{const c=i%2,r=Math.floor(i/2),x=6.35+c*3.2,y=1.85+r*1.55;rr(s,x,y,3.0,1.35);
  tx(s,k.toUpperCase(),x+0.25,y+0.22,2.6,0.3,{fontFace:M,fontSize:10,color:INK,charSpacing:1.2});tx(s,'?',x+0.25,y+0.55,2.6,0.6,{fontFace:DISP,fontSize:30,color:OR});});
 
 // 11 ASK THE QUESTIONS
 s=slide({kicker:'06 · ASK',notes:`STAGE 6 · continued
-Use this slide if the student needs support forming the questions (auxiliary gap = does).
-When all six facts are found: "Now tell me about Dr. Sarah." → She works in a hospital. She starts at 7:30… (third-person -s in use).
+Use this slide if the student needs support forming the questions (the gap = does / Does).
+When all six facts are found: "Now tell me about Dr. Sarah." → She sees 15 patients a day. She doesn't work on Sundays… (third-person -s in use).
 Do not reveal Sarah's facts on screen — say them.`});
 title(s,'Ask the questions');idCard(s,D.SARAH,9.35,0.8,{sz:0.95});
-D.SARAH.questions.forEach(([a,b,aux],i)=>{const y=1.95+i*0.66;tx(s,[{text:a,options:{}},{text:'_____',options:{color:OR}},{text:b,options:{}}],0.6,y,8.5,0.55,{fontFace:ED,fontSize:25,valign:'middle'});});
+D.SARAH.questions.forEach(([a,b,aux],i)=>{const y=1.95+i*0.66;tx(s,[{text:a,options:{}},{text:'_____',options:{color:OR}},{text:b,options:{}}],0.6,y,8.55,0.55,{fontFace:ED,fontSize:23,valign:'middle'});});
 rr(s,9.35,2.2,3.38,2.7);label(s,'SHORT ANSWERS',9.65,2.45,3);
 tx(s,[{text:'Yes, she does.',options:{breakLine:true}},{text:'No, she doesn’t.'}],9.65,2.85,2.9,0.9,{fontFace:ED,fontSize:19,lineSpacingMultiple:1.2});
 label(s,'THEN',9.65,3.9,2);tx(s,'Tell me about Dr. Sarah.',9.65,4.2,2.9,0.6,{fontSize:16});
-tx(s,[{text:'She work',options:{}},{text:'s',options:{color:OR}},{text:' in…  She start',options:{}},{text:'s',options:{color:OR}},{text:' at…',options:{}}],0.6,6.05,9,0.5,{fontFace:ED,fontSize:22,color:INK});
+tx(s,[{text:'She see',options:{}},{text:'s',options:{color:OR}},{text:'…  She doesn’t…  She go',options:{}},{text:'es',options:{color:OR}},{text:'…',options:{}}],0.6,6.05,9,0.5,{fontFace:ED,fontSize:22,color:INK});
 
 // 12 HE WORKS
 s=slide({kicker:'07 · SAY IT',notes:`STAGE 7 · Pronunciation micro-focus · 3 min · T↔S
 NOTICE: "Listen — are the endings the same?" Say works / lives / watches.
 LISTEN: model each sentence twice, natural speed.
 REPEAT: student repeats; tap the final sound.
-USE: "Tell me about a colleague or a friend." → She works… He lives… He watches…
+USE: "Tell me about a colleague." If needed: "Where does he/she work? What does he/she do?" → She works… He lives… He watches…
 Only 3 minutes — no phonetics lecture.`});
 title(s,'He works.');steps(s,['NOTICE','LISTEN','REPEAT','USE'],-1,0.6,1.7,false);
 [['work','works','s','He works at night.'],['live','lives','z','She lives in Brazil.'],['watch','watches','iz','He watches TV after work.']].forEach(([a,b,snd,ex],i)=>{const x=0.6+i*4.1;rr(s,x,2.3,3.85,3.3);
  tx(s,a,x+0.3,2.55,3.3,0.45,{fontSize:20,color:INK});tx(s,[{text:b.slice(0,a.length),options:{}},{text:b.slice(a.length),options:{color:OR}}],x+0.3,2.95,3.3,0.8,{fontFace:DISP,fontSize:40});
  rr(s,x+0.3,3.9,0.75,0.42,NAVY,{rectRadius:0.21});tx(s,'/'+snd+'/',x+0.3,3.9,0.75,0.42,{fontFace:M,fontSize:12,color:PAPER,align:'center',valign:'middle'});
  tx(s,ex,x+0.3,4.55,3.3,0.8,{fontFace:ED,fontSize:18});});
-tx(s,[{text:'USE  ',options:{fontFace:M,fontSize:12,color:OR}},{text:'Tell me about a friend or a colleague.',options:{}}],0.6,6.0,10,0.5,{fontFace:ED,fontSize:22});
+tx(s,[{text:'USE  ',options:{fontFace:M,fontSize:12,color:OR}},{text:'Tell me about a colleague.',options:{}}],0.6,6.0,10,0.5,{fontFace:ED,fontSize:22});
 
 // 13 DOCTOR VS DOCTOR — ROUND 1
 s=slide({kicker:'08 · DOCTOR VS. DOCTOR',notes:`STAGE 8 · Main communicative task · 10 min (slides 13–15)
-ROUND 1 (about 3 min) · S→T: the student interviews you about Dr. Ben. You answer as his colleague, in the 3rd person.
-TEACHER ONLY — Dr. Ben: works at a hospital · starts at 8:00 in the evening · works at night (Yes, he does) · sees about 20 patients a night · works on weekends (Yes, he does — he doesn't work on Mondays) · finishes at 6:00 in the morning.
+Three rounds: SUPPORTED → PERSONALISED → INDEPENDENT.
+ROUND 1 (about 3 min) · S→T · SUPPORTED: the student interviews you about Dr. Ben, Dr. Sarah's colleague. Answer in the 3rd person, only what is asked.
+TEACHER ONLY — do not show: works at a hospital · starts at 8:00 in the evening · works at night · sees about 20 patients a night · works on weekends · doesn't work on Mondays · finishes at 6:00 in the morning.
+If asked "Does he work at the clinic?" → "No, he doesn't. He works at a hospital." 
 Monitor, don't interrupt. Keep logging errors.`});
 title(s,'Doctor vs. Doctor');steps(s,['ROUND 1 · DR. BEN','ROUND 2 · YOU','ROUND 3 · NO HELP'],0,0.6,1.7,false);
-idCard(s,D.BEN,0.6,2.45,{sz:1.3});
-tx(s,'Ask me about Dr. Ben.',0.6,4.1,4.8,0.5,{fontFace:ED,fontSize:24});tx(s,'I’m his colleague.',0.6,4.6,4.8,0.45,{fontSize:20,color:INK});
+idCard(s,D.BEN,0.6,2.45,{sz:1.3,label:'DR. SARAH’S COLLEAGUE'});
+tx(s,'Ask me about Dr. Ben.',0.6,4.1,4.8,0.5,{fontFace:ED,fontSize:24});tx(s,'He works with Dr. Sarah.',0.6,4.6,4.8,0.45,{fontSize:20,color:INK});
 ['Where does he work?','What time does he start?','Does he work at night?','How many patients does he see?','Does he work on weekends?','What time does he finish?'].forEach((q,i)=>{const y=2.45+i*0.66;rr(s,6.1,y,6.63,0.54,SAND);tx(s,q,6.4,y,6.2,0.54,{fontFace:ED,fontSize:19,valign:'middle'});});
 
 // 14 ROUND 2
 s=slide({kicker:'08 · DOCTOR VS. DOCTOR',notes:`STAGE 8 · ROUND 2 (about 3–4 min) · T→S
-Now you interview the student. The questions are on screen as a model of do-questions; the student answers with full sentences where natural.
-Follow up genuinely ("Really? Why?"). Keep logging errors.`});
+PERSONALISED. Now you interview the student about their real routine.
+Do not ask all six questions mechanically. Choose 3–4 questions and use natural follow-up questions where appropriate.
+Examples: "What time do you start work?" → "Every day?" → "What do you do first?" · "Do you work on weekends?" → "How often?" · "Where do you work?" → "Do you like working there?"
+Aim: QUESTION → ANSWER → FOLLOW-UP. Keep follow-ups simple — no new grammar. Keep logging errors.`});
 title(s,'Your turn.');steps(s,['ROUND 1 · DR. BEN','ROUND 2 · YOU','ROUND 3 · NO HELP'],1,0.6,1.7,false);
 tx(s,'I ask. You answer.',0.6,2.3,4.5,0.5,{fontFace:ED,fontSize:24});
 tx(s,[{text:'I start work at…',options:{breakLine:true}},{text:'I see about… patients.',options:{breakLine:true}},{text:'I don’t work on…'}],0.6,2.95,4.8,1.5,{fontSize:19,color:INK,lineSpacingMultiple:1.2});
@@ -200,7 +205,8 @@ D.ROUND2.forEach((q,i)=>{const y=2.3+i*0.7;rr(s,6.1,y,6.63,0.56,SAND);tx(s,Strin
 
 // 15 ROUND 3
 s=slide({dark:true,kicker:'08 · ROUND 3 · NO HELP',notes:`STAGE 8 · ROUND 3 (about 3 min) · S→T
-No prompts. "Tell me about your typical working day." Let the student speak for 2 minutes without help.
+INDEPENDENT. No prompts. "Tell me about your typical working day." Extended freer speaking — about 2–3 minutes without help.
+(Different from the exit task, which is a short 4–5 sentence final check.)
 Monitor silently; choose the 3–5 most useful real errors from the whole lesson and type them into slide 16 now.`});
 tx(s,'Tell me about your typical working day.',0.6,1.5,10.5,2.6,{fontFace:DISP,fontSize:54,color:PAPER,lineSpacingMultiple:0.95});
 tx(s,'From the morning to the evening.',0.6,4.35,8,0.5,{fontFace:ED,fontSize:22,color:MUTED});
@@ -208,8 +214,9 @@ dayline(s,0.6,6.1,12.13,{dark:true});
 
 // 16 CAN YOU FIX IT?
 s=slide({kicker:'09 · CAN YOU FIX IT?',notes:`STAGE 9 · Delayed correction · 5 min · T↔S
-BEFORE SHOWING: replace these example sentences with 3–5 REAL errors from your log (type over them; delete unused lines).
-Show one at a time if possible. "Is it right? Can you fix it?" Student self-corrects; if stuck, point to the pattern box.
+BEFORE SHOWING: replace the example sentences with 3–5 REAL errors produced by the student during the lesson whenever possible (type over them; delete unused lines). The examples are only a backup.
+Use the student's own language. Show one error at a time. Ask: "Is it right?" "Can you fix it?" — guided self-correction; if stuck, point to the pattern box.
+Don't explain the grammar again unless absolutely necessary. Never correct more than one target error in the same sentence.
 Finish with the pattern box (read it together once).`});
 title(s,'Can you fix it?');
 tx(s,'Try again.',9.23,0.85,3.5,0.7,{fontFace:T,bold:true,italic:true,fontSize:30,color:OR,align:'right'});
@@ -220,12 +227,12 @@ tx(s,'Your sentences from today.',0.6,5.85,8,0.45,{fontSize:18,color:INK});
 
 // 17 EXIT
 s=slide({dark:true,kicker:'10 · EXIT TASK',notes:`STAGE 10 · Exit task · 2 min · S→T
-"So, what does a typical day look like for you?" The student produces 4–5 sentences with no help.
-Check against the exit checklist (lesson plan): simple present form · routine vocabulary · 3rd-person / questions if used · fewer of today's main slips.
-Mention next lesson: How often…? (always / usually / sometimes / never). Don't teach it now.`});
+"So, what does a typical day look like for you?" A short final check: 4–5 sentences, no help. (Round 3 was the extended speaking; this measures the main aim.)
+Check against the exit checklist (lesson plan, Appendix D): simple present form · routine vocabulary · 3rd-person / questions where used · fewer of today's logged slips.
+Small preview only — How often…? (always · usually · sometimes · never). Do not teach this now.`});
 tx(s,'So, what does a typical day look like for you?',0.6,1.4,10.8,2.7,{fontFace:DISP,fontSize:50,color:PAPER,lineSpacingMultiple:0.95});
 tx(s,'4–5 sentences. No help.',0.6,4.35,8,0.5,{fontFace:ED,fontSize:24,color:OR});
-tx(s,'NEXT TIME · HOW OFTEN DO YOU…?',0.6,6.1,8,0.3,{fontFace:M,fontSize:11,color:MUTED,charSpacing:1.5});
+tx(s,'NEXT TIME · HOW OFTEN DO YOU…? · ALWAYS · USUALLY · SOMETIMES · NEVER',0.6,6.95,8.4,0.3,{fontFace:M,fontSize:9,color:MUTED,charSpacing:1.2});
 s.addImage({path:'/tmp/td/logo_reverse_crop.png',x:11.78,y:5.45,w:0.95,h:0.95*356/308,altText:'Today'});
 }
 (async()=>{await prep();build();await pres.writeFile({fileName:OUT});console.log('slides',N);})();
